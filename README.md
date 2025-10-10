@@ -38,7 +38,7 @@ Download and install Tampermonkey for your browser:
 
 1. Click on the Tampermonkey icon in your browser
 2. Select "Create a new script"
-3. Copy and paste the Better LinkedIn script
+3. Copy and paste the [Better LinkedIn script](https://github.com/fx-biocoder/better-linkedin/blob/main/script.js)
 4. Save the script (File → Save or Ctrl+S / Cmd+S)
 
 ### Step 4: Configure (Optional)
