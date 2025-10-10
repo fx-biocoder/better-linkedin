@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Better Linkedin
+// @name         Better LinkedIn
 // @namespace    http://tampermonkey.net/
 // @version      2025-10-10
 // @description  Improve your LinkedIn feed by automatically removing unwanted posts
@@ -47,21 +47,24 @@
     const removePostsByKeyword = function() {
         // Get all posts
         const publications = document.querySelectorAll("div.fie-impression-container");
-    
-        // Mute publications containing a specific word
+
+        // Hide posts containing a specific word
         publications.forEach((pub) => {
-            const publicationWords = pub.querySelector("div.update-components-text.relative.update-components-update-v2__commentary").textContent.split(" ");
-            let stopSearch = false;
-    
-            publicationWords.forEach((word) => {
-                if (stopSearch) {
-                    return;
-                }
-                if (mutedWords.has(word.toLowerCase())) {
-                    pub.style.display = "none";
-                    stopSearch = true;
-                }
-            })
+            const publicationWords = pub.querySelector("div.update-components-text.relative.update-components-update-v2__commentary");
+            if (publicationWords !== null && publicationWords !== undefined) {
+                const words = publicationWords.textContent.split(" ");
+                let stopSearch = false;
+
+                words.forEach((word) => {
+                    if (stopSearch) {
+                        return;
+                    }
+                    if (mutedWords.has(word.toLowerCase())) {
+                        pub.style.display = "none";
+                        stopSearch = true;
+                    }
+                })
+            }
         })
     }
     
