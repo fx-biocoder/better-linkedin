@@ -138,9 +138,9 @@ If you find this extension helpful and would like to support its development, co
 
 ### 💖 Support the Project
 
-- **Buy me a coffee:** [Ko-fi](https://ko-fi.com/fxbiocoder)
+- **Buy me a coffee:** [Ko-fi](https://ko-fi.com/biocoder)
 - **GitHub Sponsors:** [Sponsor me on GitHub](https://github.com/sponsors/fx-biocoder)
-- **PayPal:** [PayPal Donation](https://paypal.me/fxbiocoder)
+- **PayPal:** [PayPal Donation](https://paypal.me/facumartinez680)
 
 ### 🚀 Other Ways to Support
 
