@@ -11,8 +11,6 @@ A web extension that automatically hides promoted posts and allows you to filter
 - Clean and distraction-free LinkedIn experience
 - Easy-to-use popup interface
 
----
-
 ## Installation
 
 ### Method 1: Download and Install (Recommended)
