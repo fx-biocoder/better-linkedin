@@ -1,96 +1,160 @@
 # Better LinkedIn
 
-A Tampermonkey userscript that automatically hides promoted posts and allows you to filter out posts containing specific keywords on LinkedIn.
+A web extension that automatically hides promoted posts and allows you to filter out posts containing specific keywords or company names on LinkedIn.
 
 ## Features
 
 - Automatically hides all promoted posts (posts with "Promoted" tag)
 - Filter posts by custom keywords
-- Works automatically as you scroll through your LinkedIn feed
+- Filter posts by company names
+- Toggle each filtering option on/off
 - Clean and distraction-free LinkedIn experience
+- Easy-to-use popup interface
 
-## Requirements
-
-- A web browser (Chrome, Firefox, Edge, Safari, or Opera)
-- [Tampermonkey](https://www.tampermonkey.net/) extension installed
+---
 
 ## Installation
 
-### Step 1: Install Tampermonkey
+### Method 1: Download and Install (Recommended)
 
-Download and install Tampermonkey for your browser:
-- [Chrome](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
-- [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
-- [Edge](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd)
-- [Safari](https://apps.apple.com/us/app/tampermonkey/id1482490089)
-- [Opera](https://addons.opera.com/en/extensions/details/tampermonkey-beta/)
+1. **Download the extension:**
+   - Go to the [Releases](https://github.com/fx-biocoder/better-linkedin/releases) page
+   - Download the latest `.zip` file
+   - Extract the downloaded file
 
-### Step 2: Enable Developer Mode (Chrome Users Only)
+2. **Install in your browser:**
 
-**Important for Chrome users:** Before using the script, you need to enable Developer Mode and user scripts:
-
+#### Chrome
 1. Open Chrome and go to `chrome://extensions/`
-2. Toggle **Developer mode** ON (switch in the top-right corner)
-3. Click on the Tampermonkey extension details
-4. Scroll down and ensure **user scripts** are enabled
+2. Enable "Developer mode" (toggle in top-right corner)
+3. Click "Load unpacked"
+4. Select the extracted folder
+5. The extension should now appear in your extensions list
 
-### Step 3: Install the Script
+#### Firefox
+1. Open Firefox and go to `about:debugging`
+2. Click "This Firefox"
+3. Click "Load Temporary Add-on"
+4. Select the `manifest.json` file from the extracted folder
+5. The extension will be temporarily installed (reloads after browser restart)
 
-1. Click on the Tampermonkey icon in your browser
-2. Select "Create a new script"
-3. Copy and paste the [Better LinkedIn script](https://github.com/fx-biocoder/better-linkedin/blob/main/script.js)
-4. Save the script (File → Save or Ctrl+S / Cmd+S)
+### Method 2: Clone and Build (For Developers)
 
-### Step 4: Configure (Optional)
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/fx-biocoder/better-linkedin.git
+   cd better-linkedin
+   ```
 
-To filter posts by specific keywords:
-
-1. Open the script in Tampermonkey editor
-2. Find the `muteWords` set in the script
-3. Add your desired keywords to filter
-4. Save the script
-
-Example:
-```javascript
-const mutedWords = new Set(["lorem", "ipsum", "etcetera..."]);
-```
+2. **Install in your browser** (follow the same steps as Method 1)
 
 ## Usage
 
-Once installed and configured:
+Once installed:
 
-1. Navigate to [LinkedIn](https://www.linkedin.com/feed/)
-2. The script will automatically run and hide:
-   - All promoted posts
-   - Posts containing your specified keywords
-3. Scroll through your feed as usual
+1. **Navigate to LinkedIn:** Go to [LinkedIn Feed](https://www.linkedin.com/feed/)
+2. **Open the extension:** Click the Better LinkedIn icon in your browser toolbar
+3. **Configure settings:**
+   - ✅ Check "Hide promoted posts" to automatically hide sponsored content
+   - ✅ Check "Hide posts by muted words" to filter posts containing specific keywords
+   - ✅ Check "Hide posts by muted companies" to filter posts from specific companies
+   - Add keywords in the "Muted Words" section
+   - Add company names in the "Muted Companies" section
+4. **Save and enjoy:** Settings are automatically saved and applied immediately
 
-The script works in real-time, continuously monitoring for new posts as they load.
+The extension works in real-time, continuously monitoring for new posts as they load.
+
+## Configuration
+
+### Adding Muted Words
+- Type a word in the "Muted Words" input field
+- Click "Add" or press Enter
+- Posts containing this word will be hidden
+- Remove words by clicking the "×" button
+
+### Adding Muted Companies
+- Type a company name in the "Muted Companies" input field
+- Click "Add" or press Enter
+- Posts from this company will be hidden
+- Remove companies by clicking the "×" button
+
+### Toggle Options
+- Each filtering option can be enabled/disabled independently
+- Changes take effect immediately
+- Settings are saved automatically
 
 ## Troubleshooting
 
-**Script not working?**
-- Make sure Tampermonkey is enabled
-- Check that the script is enabled in Tampermonkey dashboard
-- For Chrome users: Verify Developer Mode and user scripts are enabled
+**Extension not working?**
+- Make sure the extension is enabled in your browser
+- Check that you're on the LinkedIn feed page (`linkedin.com/feed`)
 - Try refreshing the LinkedIn page
 - Check browser console for any errors (F12 → Console tab)
 
-**Some promoted posts still showing?**
+**Some posts still showing?**
 - LinkedIn may change their HTML structure occasionally
-- Report this issue [HERE](https://github.com/fx-biocoder/better-linkedin/issues)
+- Make sure the filtering options are enabled in the popup
+- Check that company names match exactly (case-sensitive)
+- Report issues using the "Report Bug" button in the extension popup
+
+**Extension not appearing in browser?**
+- For Chrome: Check `chrome://extensions/` and ensure it's enabled
+- For Firefox: Check `about:addons` and ensure it's enabled
+- For Safari: Check Safari → Preferences → Extensions
 
 ## Contributing
 
 Contributions are welcome! Feel free to:
-- Report bugs
+- Report bugs using the "Report Bug" button in the extension
 - Suggest new features
 - Submit pull requests
+- Help improve documentation
+
+## Development
+
+### Building the Extension
+
+1. Clone the repository
+2. Make your changes
+3. Test in your browser using "Load unpacked"
+4. Submit a pull request
+
+### File Structure
+
+```
+better-linkedin/
+├── manifest.json          # Extension manifest
+├── content.js             # Content script (runs on LinkedIn)
+├── popup.html             # Extension popup HTML
+├── popup.js               # Extension popup logic
+├── popup.css              # Extension popup styles
+└── README.md              # This file
+```
 
 ## License
 
 This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/).
 
+## Support
+
+If you find this extension helpful and would like to support its development, consider making a donation:
+
+### 💖 Support the Project
+
+- **Buy me a coffee:** [Ko-fi](https://ko-fi.com/fxbiocoder)
+- **GitHub Sponsors:** [Sponsor me on GitHub](https://github.com/sponsors/fx-biocoder)
+- **PayPal:** [PayPal Donation](https://paypal.me/fxbiocoder)
+
+### 🚀 Other Ways to Support
+
+- ⭐ **Star this repository** if you find it useful
+- 🐛 **Report bugs** using the "Report Bug" button in the extension
+- 💡 **Suggest new features** via GitHub Issues
+- 📢 **Share with others** who might benefit from this extension
+- 🔧 **Contribute code** by submitting pull requests
+
+Your support helps maintain and improve this extension, ensuring it stays up-to-date with LinkedIn's changes and adding new features based on user feedback.
+
 ## Disclaimer
 
-This is an unofficial userscript and is not affiliated with, endorsed by, or connected to LinkedIn or Microsoft. Use at your own risk.
+This is an unofficial browser extension and is not affiliated with, endorsed by, or connected to LinkedIn or Microsoft. Use at your own risk.

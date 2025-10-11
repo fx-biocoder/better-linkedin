@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Better LinkedIn</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="app-name">Better LinkedIn</h1>
+            <span class="version">v1.0.0-beta</span>
+        </header>
+        
+        <div class="settings-section">
+            <div class="setting-item">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="removePromoted">
+                    <span class="checkmark"></span>
+                    Hide promoted posts
+                </label>
+            </div>
+            
+            <div class="setting-item">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="removeByKeywords">
+                    <span class="checkmark"></span>
+                    Hide posts by muted words
+                </label>
+            </div>
+            
+            <div class="setting-item">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="removeByCompanies">
+                    <span class="checkmark"></span>
+                    Hide posts by muted companies
+                </label>
+            </div>
+        </div>
+        
+        <div class="keywords-section">
+            <h3>Muted Words</h3>
+            <div class="add-keyword">
+                <input type="text" id="newKeyword" placeholder="Enter a word to mute...">
+                <button id="addKeywordBtn">Add</button>
+            </div>
+            <div class="keywords-list" id="keywordsList">
+                <!-- Keywords will be populated here -->
+            </div>
+        </div>
+        
+        <div class="companies-section">
+            <h3>Muted Companies</h3>
+            <div class="add-company">
+                <input type="text" id="newCompany" placeholder="Enter a company name to mute...">
+                <button id="addCompanyBtn">Add</button>
+            </div>
+            <div class="companies-list" id="companiesList">
+                <!-- Companies will be populated here -->
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Improve your LinkedIn feed experience</p>
+            <button id="reportBugBtn" class="bug-report-btn">
+                <span class="bug-icon">🐛</span>
+                Report Bug
+            </button>
+        </div>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>

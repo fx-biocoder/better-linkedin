@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Better LinkedIn",
+  "version": "1.0.0",
+  "description": "Improve your LinkedIn feed by automatically removing unwanted posts",
+  "author": "Facundo Martínez",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://www.linkedin.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/feed/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Better LinkedIn Settings"
+  }
+}
