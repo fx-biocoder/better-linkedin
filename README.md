@@ -107,27 +107,6 @@ Contributions are welcome! Feel free to:
 - Submit pull requests
 - Help improve documentation
 
-## Development
-
-### Building the Extension
-
-1. Clone the repository
-2. Make your changes
-3. Test in your browser using "Load unpacked"
-4. Submit a pull request
-
-### File Structure
-
-```
-better-linkedin/
-├── manifest.json          # Extension manifest
-├── content.js             # Content script (runs on LinkedIn)
-├── popup.html             # Extension popup HTML
-├── popup.js               # Extension popup logic
-├── popup.css              # Extension popup styles
-└── README.md              # This file
-```
-
 ## License
 
 This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/).
