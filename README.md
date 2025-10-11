@@ -98,7 +98,6 @@ The extension works in real-time, continuously monitoring for new posts as they 
 **Extension not appearing in browser?**
 - For Chrome: Check `chrome://extensions/` and ensure it's enabled
 - For Firefox: Check `about:addons` and ensure it's enabled
-- For Safari: Check Safari → Preferences → Extensions
 
 ## Contributing
 
