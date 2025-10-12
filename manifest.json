@@ -6,7 +6,8 @@
   "author": "Facundo Martínez",
   "permissions": [
     "storage",
-    "activeTab"
+    "activeTab",
+    "tabs"
   ],
   "host_permissions": [
     "https://www.linkedin.com/*"
@@ -21,5 +22,10 @@
   "action": {
     "default_popup": "popup.html",
     "default_title": "Better LinkedIn Settings"
+  },
+  "icons": {
+    "16": "img/icon.png",
+    "48": "img/icon.png",
+    "128": "img/icon.png"
   }
 }

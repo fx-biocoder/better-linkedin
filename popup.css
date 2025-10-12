@@ -12,12 +12,12 @@ body {
 }
 
 .container {
-    width: 320px;
-    min-height: 400px;
+    width: 340px;
+    min-height: 600px;
     background: white;
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    overflow: visible;
 }
 
 .header {
@@ -43,12 +43,12 @@ body {
 }
 
 .settings-section {
-    padding: 20px;
+    padding: 15px;
     border-bottom: 1px solid #f0f0f0;
 }
 
 .setting-item {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .setting-item:last-child {
@@ -97,33 +97,100 @@ body {
     transform: rotate(45deg);
 }
 
+.help-icon {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background: #0077b5;
+    color: white;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 14px;
+    margin-left: 6px;
+    cursor: help;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.help-icon:hover {
+    background: #005885;
+    transform: scale(1.1);
+}
+
+.help-icon::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: normal;
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 280px;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-top: 8px;
+}
+
+.help-icon::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-bottom-color: #333;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 1000;
+    margin-top: 3px;
+}
+
+.help-icon:hover::before,
+.help-icon:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
 .keywords-section {
-    padding: 20px;
+    padding: 15px;
     border-bottom: 1px solid #f0f0f0;
 }
 
 .keywords-section h3 {
     font-size: 16px;
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     color: #333;
 }
 
 .companies-section {
-    padding: 20px;
+    padding: 15px;
 }
 
 .companies-section h3 {
     font-size: 16px;
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     color: #333;
 }
 
 .add-company {
     display: flex;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .add-company input {
@@ -157,7 +224,7 @@ body {
 }
 
 .companies-list {
-    max-height: 120px;
+    max-height: 200px;
     overflow-y: auto;
 }
 
@@ -203,7 +270,7 @@ body {
 .add-keyword {
     display: flex;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .add-keyword input {
@@ -237,7 +304,7 @@ body {
 }
 
 .keywords-list {
-    max-height: 120px;
+    max-height: 200px;
     overflow-y: auto;
 }
 
@@ -281,7 +348,7 @@ body {
 }
 
 .footer {
-    padding: 16px 20px;
+    padding: 12px 15px;
     background: #f8f9fa;
     text-align: center;
     border-top: 1px solid #e0e0e0;
@@ -317,6 +384,34 @@ body {
 }
 
 .bug-icon {
+    font-size: 14px;
+}
+
+.donate-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #0077b5 0%, #005885 100%);
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.donate-btn:hover {
+    background: linear-gradient(135deg, #005885 0%, #004066 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 119, 181, 0.3);
+}
+
+.donate-icon {
     font-size: 14px;
 }
 

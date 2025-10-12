@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const newCompanyInput = document.getElementById('newCompany');
     const addCompanyBtn = document.getElementById('addCompanyBtn');
     const companiesList = document.getElementById('companiesList');
+    const donateBtn = document.getElementById('donateBtn');
     const reportBugBtn = document.getElementById('reportBugBtn');
 
     // Load saved settings
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     removeByCompaniesCheckbox.addEventListener('change', saveSettings);
     addKeywordBtn.addEventListener('click', addKeyword);
     addCompanyBtn.addEventListener('click', addCompany);
+    donateBtn.addEventListener('click', openDonations);
     reportBugBtn.addEventListener('click', reportBug);
     newKeywordInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
@@ -202,6 +204,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     action: 'settingsUpdated'
                 });
             }
+        });
+    }
+
+    // Open donations page function
+    function openDonations() {
+        chrome.tabs.create({
+            url: chrome.runtime.getURL('donations.html'),
+            active: true
         });
     }
 

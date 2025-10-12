@@ -25,7 +25,7 @@
             settings.removePromoted = result.removePromoted === true;
             settings.removeByKeywords = result.removeByKeywords === true; 
             settings.removeByCompanies = result.removeByCompanies === true;
-            settings.mutedWords = result.mutedWords || ['lorem', 'ipsum'];
+            settings.mutedWords = result.mutedWords || [];
             settings.mutedCompanies = result.mutedCompanies || [];
         } catch (error) {
             console.error('Error loading settings:', error);
@@ -67,7 +67,8 @@
         publications.forEach((pub) => {
             const publicationWords = pub.querySelector("div.update-components-text.relative.update-components-update-v2__commentary");
             if (publicationWords !== null && publicationWords !== undefined) {
-                const words = publicationWords.textContent.split(" ");
+                const INVALID_CHARS = /[.,:;¿?!¡'"-_]/g;
+                const words = publicationWords.textContent.split(" ").map(w => w.replace(INVALID_CHARS, ''));
                 let containsMutedWord = false;
 
                 words.forEach((word) => {
