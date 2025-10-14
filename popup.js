@@ -92,8 +92,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function addWord(newInput, type, list) {
-        const word = newInput.value.trim();
-        if (type === 'keyword') word.toLowerCase();
+        let word = newInput.value;
+        switch (type) {
+            case 'keyword':
+                word = word.trim().toLowerCase();
+                break;
+            case 'company':
+                word = word.trim();
+                break;
+        }
         
         if (!word) return;
 
