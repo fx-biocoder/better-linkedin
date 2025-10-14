@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Better LinkedIn",
+  "name": "Better LinkedIn: Enhance your LinkedIn\u2122 feed",
   "version": "1.0.0",
-  "description": "Improve your LinkedIn feed by automatically removing unwanted posts",
+  "description": "Improve your LinkedIn\u2122 feed by automatically removing unwanted posts.",
   "author": "Facundo Martínez",
   "permissions": [
     "storage",
