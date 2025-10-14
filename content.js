@@ -11,6 +11,10 @@
         mutedCompanies: []
     };
 
+    const LINKEDIN_POST_CSS_SELECTOR = 'div.fie-impression-container';
+    const LINKEDIN_POST_BODY_CSS_SELECTOR = 'div.update-components-text.relative.update-components-update-v2__commentary'
+    const LINKEDIN_COMPANY_NAME_CSS_SELECTOR = 'div.JHLsROFkOIglnpiDaurFDndJjLiWtVOqWoo div.update-components-actor__container.display-flex.flex-grow-1 span';
+
     // Load settings from storage
     async function loadSettings() {
         try {
@@ -35,7 +39,7 @@
     // Remove promoted posts
     const removePromotedPosts = function() {
         // List of LinkedIn posts currently visible on your feed
-        const publications = document.querySelectorAll("div.fie-impression-container");
+        const publications = document.querySelectorAll(LINKEDIN_POST_CSS_SELECTOR);
     
         // Handle promoted posts
         publications.forEach((item) => {
@@ -61,13 +65,13 @@
     // Remove posts by keyword
     const removePostsByKeyword = function() {
         // Get all posts
-        const publications = document.querySelectorAll("div.fie-impression-container");
+        const publications = document.querySelectorAll(LINKEDIN_POST_CSS_SELECTOR);
+        const INVALID_CHARS = /[.,:;¿?!¡'"-_]/g;
 
         // Handle posts containing muted words
         publications.forEach((pub) => {
-            const publicationWords = pub.querySelector("div.update-components-text.relative.update-components-update-v2__commentary");
+            const publicationWords = pub.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
             if (publicationWords !== null && publicationWords !== undefined) {
-                const INVALID_CHARS = /[.,:;¿?!¡'"-_]/g;
                 const words = publicationWords.textContent.split(" ").map(w => w.replace(INVALID_CHARS, ''));
                 let containsMutedWord = false;
 
@@ -91,11 +95,11 @@
     // Remove posts by company name
     const removePostsByCompanyName = function() {
         // Get all posts
-        const publications = document.querySelectorAll("div.fie-impression-container");
+        const publications = document.querySelectorAll(LINKEDIN_POST_CSS_SELECTOR);
         
         // Handle posts by company name
         publications.forEach((pub) => {
-            const spans = pub.querySelectorAll("div.JHLsROFkOIglnpiDaurFDndJjLiWtVOqWoo div.update-components-actor__container.display-flex.flex-grow-1 span");
+            const spans = pub.querySelectorAll(LINKEDIN_COMPANY_NAME_CSS_SELECTOR);
             let isMutedCompany = false;
 
             spans.forEach((span) => {
@@ -108,7 +112,7 @@
             })
 
             if (isMutedCompany) {
-                if (settings.removeByCompanies) { // The problem is HERE, is this condition met???
+                if (settings.removeByCompanies) {
                     pub.style.display = "none";
                 }
             }

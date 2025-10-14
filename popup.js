@@ -20,19 +20,24 @@ document.addEventListener('DOMContentLoaded', function() {
     removePromotedCheckbox.addEventListener('change', saveSettings);
     removeByKeywordsCheckbox.addEventListener('change', saveSettings);
     removeByCompaniesCheckbox.addEventListener('change', saveSettings);
-    addKeywordBtn.addEventListener('click', addKeyword);
-    addCompanyBtn.addEventListener('click', addCompany);
+
+    addKeywordBtn.addEventListener('click', () => {
+        addWord(newKeywordInput, 'keyword', keywordsList);
+    });
+
+    addCompanyBtn.addEventListener('click', () => {
+        addWord(newCompanyInput, 'company', companiesList);
+    });
+
     donateBtn.addEventListener('click', openDonations);
     reportBugBtn.addEventListener('click', reportBug);
+
     newKeywordInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            addKeyword();
-        }
+        if (e.key === 'Enter') addWord(newKeywordInput, 'keyword', keywordsList);
     });
+
     newCompanyInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            addCompany();
-        }
+        if (e.key === 'Enter') addWord(newCompanyInput, 'company', companiesList);
     });
 
     // Load settings from storage
@@ -52,12 +57,12 @@ document.addEventListener('DOMContentLoaded', function() {
             removeByCompaniesCheckbox.checked = result.removeByCompanies || false;
 
             // Load muted words
-            const mutedWords = result.mutedWords || ['lorem', 'ipsum'];
-            displayKeywords(mutedWords);
+            const mutedWords = result.mutedWords || [];
+            displayWords(mutedWords, 'keyword', keywordsList);
 
             // Load muted companies
             const mutedCompanies = result.mutedCompanies || [];
-            displayCompanies(mutedCompanies);
+            displayWords(mutedCompanies, 'company', companiesList);
         } catch (error) {
             console.error('Error loading settings:', error);
         }
@@ -86,114 +91,66 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Add new keyword
-    function addKeyword() {
-        const keyword = newKeywordInput.value.trim().toLowerCase();
+    function addWord(newInput, type, list) {
+        const word = newInput.value.trim();
+        if (type === 'keyword') word.toLowerCase();
         
-        if (!keyword) {
-            return;
-        }
+        if (!word) return;
 
-        // Check if keyword already exists
-        const existingKeywords = Array.from(keywordsList.querySelectorAll('.keyword-text'))
+        // Check if word already exists
+        const existingWords = Array.from(list.querySelectorAll(`.${type}-text`))
             .map(el => el.textContent);
-        
-        if (existingKeywords.includes(keyword)) {
-            newKeywordInput.value = '';
+
+        if (existingWords.includes(word)) {
+            newInput.value = '';
             return;
         }
 
-        // Add keyword to display
-        addKeywordToDisplay(keyword);
-        
-        // Clear input
-        newKeywordInput.value = '';
-        
-        // Save settings
+        // Add word to display
+        addToDisplay(word, type, list);
+
+        // Clear input and save settings
+        newInput.value = '';
         saveSettings();
     }
 
-    // Add keyword to display
-    function addKeywordToDisplay(keyword) {
-        const keywordItem = document.createElement('div');
-        keywordItem.className = 'keyword-item';
+    // Add keyword or company to display
+    function addToDisplay(element, type, list) {
+        const span = document.createElement('span');
+        span.className = `${type}-text`;
+        span.textContent = element;
         
-        keywordItem.innerHTML = `
-            <span class="keyword-text">${keyword}</span>
-            <button class="remove-keyword" data-keyword="${keyword}">×</button>
-        `;
-        
-        // Add remove event listener
-        const removeBtn = keywordItem.querySelector('.remove-keyword');
-        removeBtn.addEventListener('click', function() {
-            keywordItem.remove();
+        const button = document.createElement('button');
+        button.className = `remove-${type}`;
+        switch (type) {
+            case 'keyword':
+                button.dataset.keyword = type;
+                break;
+            case 'company':
+                button.dataset.company = type;
+                break;
+        }
+        button.textContent = 'x';
+
+        const item = document.createElement('div');
+        item.className = `${type}-item`;
+        item.appendChild(span);
+        item.appendChild(button);
+
+        // Event listener for removal
+        const removeBtn = item.querySelector(`.remove-${type}`);
+        removeBtn.addEventListener('click', () => {
+            item.remove();
             saveSettings();
         });
-        
-        keywordsList.appendChild(keywordItem);
+
+        list.appendChild(item);
     }
 
-    // Add new company
-    function addCompany() {
-        const company = newCompanyInput.value.trim();
-        
-        if (!company) {
-            return;
-        }
-
-        // Check if company already exists
-        const existingCompanies = Array.from(companiesList.querySelectorAll('.company-text'))
-            .map(el => el.textContent);
-        
-        if (existingCompanies.includes(company)) {
-            newCompanyInput.value = '';
-            return;
-        }
-
-        // Add company to display
-        addCompanyToDisplay(company);
-        
-        // Clear input
-        newCompanyInput.value = '';
-        
-        // Save settings
-        saveSettings();
-    }
-
-    // Add company to display
-    function addCompanyToDisplay(company) {
-        const companyItem = document.createElement('div');
-        companyItem.className = 'company-item';
-        
-        companyItem.innerHTML = `
-            <span class="company-text">${company}</span>
-            <button class="remove-company" data-company="${company}">×</button>
-        `;
-        
-        // Add remove event listener
-        const removeBtn = companyItem.querySelector('.remove-company');
-        removeBtn.addEventListener('click', function() {
-            companyItem.remove();
-            saveSettings();
-        });
-        
-        companiesList.appendChild(companyItem);
-    }
-
-    // Display all keywords
-    function displayKeywords(keywords) {
-        keywordsList.innerHTML = '';
-        keywords.forEach(keyword => {
-            addKeywordToDisplay(keyword);
-        });
-    }
-
-    // Display all companies
-    function displayCompanies(companies) {
-        companiesList.innerHTML = '';
-        companies.forEach(company => {
-            addCompanyToDisplay(company);
-        });
+    // Display words
+    function displayWords(words, type, list) {
+        list.innerHTML = '';
+        words.forEach(word => addToDisplay(word, type, list));
     }
 
     // Notify content script of changes
