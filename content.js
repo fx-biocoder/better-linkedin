@@ -11,7 +11,7 @@
         mutedCompanies: []
     };
 
-    const LINKEDIN_POST_CSS_SELECTOR = 'div.fie-impression-container';
+    const LINKEDIN_POST_CSS_SELECTOR = 'div.scaffold-finite-scroll__content div';
     const LINKEDIN_POST_BODY_CSS_SELECTOR = 'div.update-components-text.relative.update-components-update-v2__commentary span.break-words.tvm-parent-container span'
     const LINKEDIN_COMPANY_NAME_CSS_SELECTOR = 'div.update-components-actor__container.display-flex.flex-grow-1 div.update-components-actor__meta a.ZBukWCSCbFNBzQTrJtSWRMSoGooCqIrpoavA.update-components-actor__meta-link span.update-components-actor__title span.NnKEocxakfFQhLyHZAnPZJzAVbzTxnUPzI.hoverable-link-text.t-14.t-bold.text-body-medium-bold.white-space-nowrap.t-black.update-components-actor__single-line-truncate span span';
 
