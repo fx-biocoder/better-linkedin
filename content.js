@@ -175,9 +175,11 @@
         const observerA = new MutationObserver(removePromotedPosts);
         const observerB = new MutationObserver(removePostsByKeyword);
         const observerC = new MutationObserver(removePostsByCompanyName);
+        const observerD = new MutationObserver(removeInteractionPosts);
         observerA.observe(document.body, { childList: true, subtree: true });
         observerB.observe(document.body, { childList: true, subtree: true });
         observerC.observe(document.body, { childList: true, subtree: true });
+        observerD.observe(document.body, { childList: true, subtree: true });
     }
     
     // Listen for settings updates from popup
