@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const removePromotedCheckbox = document.getElementById('removePromoted');
     const removeByKeywordsCheckbox = document.getElementById('removeByKeywords');
     const removeByCompaniesCheckbox = document.getElementById('removeByCompanies');
+    const removeByInteractionsCheckbox = document.getElementById('removeByInteractions');
+
     const newKeywordInput = document.getElementById('newKeyword');
     const addKeywordBtn = document.getElementById('addKeywordBtn');
     const keywordsList = document.getElementById('keywordsList');
@@ -20,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     removePromotedCheckbox.addEventListener('change', saveSettings);
     removeByKeywordsCheckbox.addEventListener('change', saveSettings);
     removeByCompaniesCheckbox.addEventListener('change', saveSettings);
+    removeByInteractionsCheckbox.addEventListener('change', saveSettings);
 
     addKeywordBtn.addEventListener('click', () => {
         addWord(newKeywordInput, 'keyword', keywordsList);
@@ -47,6 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'removePromoted',
                 'removeByKeywords',
                 'removeByCompanies',
+                'removeByInteractions',
                 'mutedWords',
                 'mutedCompanies'
             ]);
@@ -55,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
             removePromotedCheckbox.checked = result.removePromoted || false;
             removeByKeywordsCheckbox.checked = result.removeByKeywords || false;
             removeByCompaniesCheckbox.checked = result.removeByCompanies || false;
+            removeByInteractionsCheckbox.checked = result.removeByInteractions || false;
 
             // Load muted words
             const mutedWords = result.mutedWords || [];
@@ -80,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 removePromoted: removePromotedCheckbox.checked,
                 removeByKeywords: removeByKeywordsCheckbox.checked,
                 removeByCompanies: removeByCompaniesCheckbox.checked,
+                removeByInteractions: removeByInteractionsCheckbox.checked,
                 mutedWords: mutedWords,
                 mutedCompanies: mutedCompanies
             });
