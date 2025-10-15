@@ -7,6 +7,7 @@ A web extension that automatically hides promoted posts and allows you to filter
 - Automatically hides all promoted posts (posts with "Promoted" tag)
 - Filter posts by custom keywords
 - Filter posts by company names
+- Filter posts involving contact interactions (e.g., "A contact finds this insightful")
 - Toggle each filtering option on/off
 - Clean and distraction-free LinkedIn experience
 - Easy-to-use popup interface
