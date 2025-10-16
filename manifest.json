@@ -6,7 +6,6 @@
   "author": "Facundo Martínez",
   "permissions": [
     "storage",
-    "activeTab",
     "tabs"
   ],
   "host_permissions": [
