@@ -1,6 +1,6 @@
 # Better LinkedIn
 
-A web extension that automatically hides promoted posts and allows you to filter out posts containing specific keywords or company names on LinkedIn.
+A web extension that automatically hides promoted posts and allows you to filter out posts containing specific keywords or company names on LinkedIn™.
 
 ## Features
 
@@ -14,7 +14,12 @@ A web extension that automatically hides promoted posts and allows you to filter
 
 ## Installation
 
-### Method 1: Download and Install (Recommended)
+### Method 1: Use the browser extension/add-on store (recommended)
+
+- **Chrome:** Coming soon™
+- **Firefox:** [Download from Firefox add-ons](https://addons.mozilla.org/es-AR/firefox/addon/betterlinkedin/)
+
+### Method 2: Download and Install
 
 1. **Download the extension:**
    - Go to the [Releases](https://github.com/fx-biocoder/better-linkedin/releases) page
