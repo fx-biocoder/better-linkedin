@@ -12,19 +12,45 @@
         mutedCompanies: []
     };
 
-    const interactions = new Set([
-        'likes',
-        'celebrates',
-        'finds',
-        'loves',
-        'commented',
-        'supports'
-    ])
+    const interactions = {
+        // English
+        "en": new Set(['likes', 'celebrates', 'insightful', 'funny', 'loves', 'commented', 'supports']),
+        
+        // Spanish
+        "es": new Set(['recomienda', 'celebra', 'interesante', 'gracia', 'encanta', 'comentado', 'apoya']),
+        
+        // Portuguese
+        "pt": new Set(['gostou', 'parabenizou', 'interessante', 'engraçado', 'amou', 'comentou', 'apoiou']),
+    }
 
+    const promotedWords = new Set([
+        'Promoted',
+        'Promocionado',
+        'Promovido'
+    ]);
+
+    // CSS selectors to target content to be filtered
     const LINKEDIN_POST_CSS_SELECTOR = 'div.scaffold-finite-scroll__content div';
     const LINKEDIN_POST_BODY_CSS_SELECTOR = 'div.update-components-text.relative.update-components-update-v2__commentary span.break-words.tvm-parent-container span'
-    const LINKEDIN_COMPANY_NAME_CSS_SELECTOR = 'div.update-components-actor__container.display-flex.flex-grow-1 div.update-components-actor__meta a.ZBukWCSCbFNBzQTrJtSWRMSoGooCqIrpoavA.update-components-actor__meta-link span.update-components-actor__title span.NnKEocxakfFQhLyHZAnPZJzAVbzTxnUPzI.hoverable-link-text.t-14.t-bold.text-body-medium-bold.white-space-nowrap.t-black.update-components-actor__single-line-truncate span span';
+    const LINKEDIN_COMPANY_NAME_CSS_SELECTOR = 'div.update-components-actor__container.pr4.display-flex.flex-grow-1 span.update-components-actor__title span.sxqHNNveCqgQTedDLNJVuWLhrkgLEZxECwqfwM span.visually-hidden';
     const LINKEDIN_INTERACTION_POST_CSS_SELECTOR = 'span.update-components-header__text-view';
+
+    // General purpose function to change the visibility of a post
+    // Returns 'true' if the post is hidden, and 'false' if not
+    const changeVisibility = function(post, status, settingValue) {
+        let hidden = false;
+
+        if (status) {
+            if (settingValue) {
+                post.style.display = 'none';
+                hidden = true;
+            } else {
+                post.style.display = '';
+            }
+        }
+
+        return hidden
+    }
 
     // Load settings from storage
     async function loadSettings() {
@@ -50,116 +76,98 @@
     }
 
     // Remove promoted posts
-    const removePromotedPosts = function() {
-        // List of LinkedIn posts currently visible on your feed
-        const publications = document.querySelectorAll(LINKEDIN_POST_CSS_SELECTOR);
-    
-        // Handle promoted posts
-        publications.forEach((item) => {
-            const spans = item.querySelectorAll("span");
-            let isPromoted = false;
+    const removePromotedPosts = function(post) {
+        const spans = post.querySelectorAll("span");
+        let isPromoted = false;
             
-            spans.forEach((span) => {
-                if (span.textContent === "Promoted") {
-                    isPromoted = true;
-                }
-            });
-            
-            if (isPromoted) {
-                if (settings.removePromoted) {
-                    item.style.display = "none";
-                } else {
-                    item.style.display = ""; // Restore if disabled
-                }
+        spans.forEach((span) => {
+            if (promotedWords.has(span.textContent)) {
+                isPromoted = true;
             }
-        })
+        });
+            
+        const result = changeVisibility(post, isPromoted, settings.removePromoted);
+        return result;
     }
     
     // Remove posts by keyword
-    const removePostsByKeyword = function() {
-        // Get all posts
-        const publications = document.querySelectorAll(LINKEDIN_POST_CSS_SELECTOR);
+    const removePostsByKeyword = function(post) {
         const INVALID_CHARS = /[.,:;¿?!¡'"-_]/g;
+        const postWords = post.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
 
-        // Handle posts containing muted words
-        publications.forEach((pub) => {
-            const publicationWords = pub.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
-            if (publicationWords !== null && publicationWords !== undefined) {
-                const words = publicationWords.textContent.split(" ").map(w => w.replace(INVALID_CHARS, ''));
-                let containsMutedWord = false;
+        if (postWords) {
+            const words = postWords.textContent.split(" ").map(w => w.replace(INVALID_CHARS, ''));
+            let containsMutedWord = false;
 
-                words.forEach((word) => {
-                    if (settings.mutedWords.includes(word.toLowerCase())) {
-                        containsMutedWord = true;
-                    }
-                });
-                
-                if (containsMutedWord) {
-                    if (settings.removeByKeywords) {
-                        pub.style.display = "none";
-                    } else {
-                        pub.style.display = ""; // Restore if disabled
-                    }
+            words.forEach((word) => {
+                if (settings.mutedWords.includes(word.toLowerCase())) {
+                    containsMutedWord = true;
                 }
-            }
-        })
+            });
+                
+            const result = changeVisibility(post, containsMutedWord, settings.removeByKeywords);
+            return result;
+        }
     }
 
     // Remove posts by company name
-    const removePostsByCompanyName = function() {
-        // Get all posts
-        const posts = document.querySelectorAll(LINKEDIN_POST_CSS_SELECTOR);
-        
-        // Handle posts by company name
-        posts.forEach((post) => {
-            const companies = post.querySelectorAll(LINKEDIN_COMPANY_NAME_CSS_SELECTOR);
-            let isMutedCompany = false;
+    const removePostsByCompanyName = function(post) {
+        const companies = post.querySelectorAll(LINKEDIN_COMPANY_NAME_CSS_SELECTOR);
+        let isMutedCompany = false;
 
-            companies.forEach((company) => {
-                if (company && settings.mutedCompanies.includes(company.textContent)) {
-                    isMutedCompany = true;
-                }
-            })
-
-            if (isMutedCompany && settings.removeByCompanies) {
-                post.style.display = 'none';
+        companies.forEach((company) => {
+            if (company && settings.mutedCompanies.includes(company.textContent)) {
+                isMutedCompany = true;
             }
         })
+
+        const result = changeVisibility(post, isMutedCompany, settings.removeByCompanies);
+        return result;
     }
 
     // Remove interaction posts
-    const removeInteractionPosts = function() {
-        const posts = document.querySelectorAll(LINKEDIN_POST_CSS_SELECTOR);
-        
-        posts.forEach((post) => {
-            const header = post.querySelector(LINKEDIN_INTERACTION_POST_CSS_SELECTOR);
+    const removeInteractionPosts = function(post) {
+        const header = post.querySelector(LINKEDIN_INTERACTION_POST_CSS_SELECTOR);
+        const lang = document.documentElement.lang;
 
-            if (header) {
-                const headerContents = header.textContent.split(' ');
-                let isInteraction = false;
+        if (header) {
+            const headerContents = header.textContent.split(' ');
+            let isInteraction = false;
 
-                headerContents.forEach((word) => {
-                    if (interactions.has(word)) {
-                        isInteraction = true;
-                    }
-                })
-
-                if (isInteraction && settings.removeByInteractions) {
-                    post.style.display = 'none';
+            headerContents.forEach((word) => {
+                if (interactions[lang].has(word)) {
+                    isInteraction = true;
                 }
-                else {
-                    post.style.display = '';
-                }
-            }
-        })
+            })
+
+            const result = changeVisibility(post, isInteraction, settings.removeByInteractions);
+            return result;
+        }
+    }
+
+    // Function for conditionally executing a filter
+    const execute = (flag, post, filter) => {
+        if (flag) {
+            return true;
+        } else {
+            const result = filter(post);
+            return result;
+        }
     }
     
     // Main filtering function
     const runFilters = function() {
-        removePromotedPosts();
-        removePostsByKeyword();
-        removePostsByCompanyName();
-        removeInteractionPosts();
+        const posts = document.querySelectorAll(LINKEDIN_POST_CSS_SELECTOR);
+
+        posts.forEach((post) => {
+            let isFlagged = false;
+            
+            // Run filters sequentially and conditionally
+            isFlagged = execute(isFlagged, post, removePromotedPosts);
+            isFlagged = execute(isFlagged, post, removePostsByKeyword);
+            isFlagged = execute(isFlagged, post, removePostsByCompanyName);
+            isFlagged = execute(isFlagged, post, removeInteractionPosts);
+        })
     }
     
     // Initialize the extension
@@ -172,14 +180,8 @@
         });
         
         // Set up mutation observers
-        const observerA = new MutationObserver(removePromotedPosts);
-        const observerB = new MutationObserver(removePostsByKeyword);
-        const observerC = new MutationObserver(removePostsByCompanyName);
-        const observerD = new MutationObserver(removeInteractionPosts);
-        observerA.observe(document.body, { childList: true, subtree: true });
-        observerB.observe(document.body, { childList: true, subtree: true });
-        observerC.observe(document.body, { childList: true, subtree: true });
-        observerD.observe(document.body, { childList: true, subtree: true });
+        const observer = new MutationObserver(runFilters);
+        observer.observe(document.body, { childList: true, subtree: true });
     }
     
     // Listen for settings updates from popup
