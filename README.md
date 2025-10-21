@@ -16,7 +16,7 @@ A web extension that automatically hides promoted posts and allows you to filter
 
 ### Method 1: Use the browser extension/add-on store (recommended)
 
-- **Chrome:** Coming soon™
+- **Chrome:** [Download from Chrome Web Store](https://chromewebstore.google.com/detail/better-linkedin-enhance-y/oddknibdgonokobpaakcodpicfppgefg)
 - **Firefox:** [Download from Firefox add-ons](https://addons.mozilla.org/es-AR/firefox/addon/betterlinkedin/)
 
 ### Method 2: Download and Install
