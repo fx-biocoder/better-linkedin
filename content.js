@@ -21,18 +21,22 @@
         
         // Portuguese
         "pt": new Set(['gostou', 'parabenizou', 'interessante', 'engraçado', 'amou', 'comentou', 'apoiou']),
+
+        // Italian
+        "it": new Set(['geniale', 'Consigliato', 'Commentato', 'festeggia', 'sostegno'])
     }
 
     const promotedWords = new Set([
         'Promoted',
         'Promocionado',
-        'Promovido'
+        'Promovido',
+        'Post sponsorizzato'
     ]);
 
     // CSS selectors to target content to be filtered
     const LINKEDIN_POST_CSS_SELECTOR = 'div.scaffold-finite-scroll__content div';
-    const LINKEDIN_POST_BODY_CSS_SELECTOR = 'div.update-components-text.relative.update-components-update-v2__commentary span.break-words.tvm-parent-container span'
-    const LINKEDIN_COMPANY_NAME_CSS_SELECTOR = 'div.update-components-actor__container.pr4.display-flex.flex-grow-1 span.update-components-actor__title span.sxqHNNveCqgQTedDLNJVuWLhrkgLEZxECwqfwM span.visually-hidden';
+    const LINKEDIN_POST_BODY_CSS_SELECTOR = 'div.update-components-text.relative.update-components-update-v2__commentary span.break-words.tvm-parent-container span';
+    const LINKEDIN_COMPANY_NAME_CSS_SELECTOR = 'div.update-components-actor__container.pr4.display-flex.flex-grow-1 span.update-components-actor__title span.update-components-actor__single-line-truncate span.visually-hidden';
     const LINKEDIN_INTERACTION_POST_CSS_SELECTOR = 'span.update-components-header__text-view';
 
     // General purpose function to change the visibility of a post
@@ -79,32 +83,34 @@
     const removePromotedPosts = function(post) {
         const spans = post.querySelectorAll("span");
         let isPromoted = false;
-            
-        spans.forEach((span) => {
+
+        for (const span of spans) {
             if (promotedWords.has(span.textContent)) {
                 isPromoted = true;
+                break;
             }
-        });
-            
+        }
+
         const result = changeVisibility(post, isPromoted, settings.removePromoted);
         return result;
     }
     
     // Remove posts by keyword
     const removePostsByKeyword = function(post) {
-        const INVALID_CHARS = /[.,:;¿?!¡'"-_]/g;
         const postWords = post.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
 
         if (postWords) {
-            const words = postWords.textContent.split(" ").map(w => w.replace(INVALID_CHARS, ''));
+            const regex = /\b\p{L}+\b/gu;
+            const words = postWords.textContent.toLowerCase().match(regex);
             let containsMutedWord = false;
 
-            words.forEach((word) => {
-                if (settings.mutedWords.includes(word.toLowerCase())) {
+            for (const word of words) {
+                if (settings.mutedWords.includes(word)) {
                     containsMutedWord = true;
+                    break;
                 }
-            });
-                
+            }
+
             const result = changeVisibility(post, containsMutedWord, settings.removeByKeywords);
             return result;
         }
@@ -115,11 +121,12 @@
         const companies = post.querySelectorAll(LINKEDIN_COMPANY_NAME_CSS_SELECTOR);
         let isMutedCompany = false;
 
-        companies.forEach((company) => {
+        for (const company of companies) {
             if (company && settings.mutedCompanies.includes(company.textContent)) {
                 isMutedCompany = true;
+                break;
             }
-        })
+        }
 
         const result = changeVisibility(post, isMutedCompany, settings.removeByCompanies);
         return result;
@@ -134,11 +141,12 @@
             const headerContents = header.textContent.split(' ');
             let isInteraction = false;
 
-            headerContents.forEach((word) => {
+            for (const word of headerContents) {
                 if (interactions[lang].has(word)) {
                     isInteraction = true;
+                    break;
                 }
-            })
+            }
 
             const result = changeVisibility(post, isInteraction, settings.removeByInteractions);
             return result;
