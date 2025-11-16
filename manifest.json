@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Better LinkedIn: Enhance your LinkedIn\u2122 feed",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Improve your LinkedIn\u2122 feed by automatically removing unwanted posts.",
   "author": "Facundo Martínez",
   "permissions": [
@@ -16,6 +16,11 @@
       "matches": ["https://www.linkedin.com/feed/*"],
       "js": ["content.js"],
       "run_at": "document_end"
+    },
+    {
+      "matches": ["https://www.linkedin.com/jobs/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
     }
   ],
   "action": {
@@ -26,5 +31,10 @@
     "16": "img/icon.png",
     "48": "img/icon.png",
     "128": "img/icon.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "better_linkedin_v1.0.0@biocoder.dev"
+    }
   }
 }

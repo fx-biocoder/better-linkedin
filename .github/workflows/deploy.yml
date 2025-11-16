@@ -1,0 +1,48 @@
+name: Upload to Chrome Web Store
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Create extension ZIP file
+        run: |
+          zip -r better-linkedin.zip . \
+          -x "*.git*" \
+          -x "*.github*" \
+          -x "README.md" \
+          -x "CONTRIBUTING.md" \
+          -x "LICENSE.md" \
+          -x "PRIVACY_POLICY.md" \
+          -x "*.zip"
+
+      - name: Upload to Chrome Web Store
+        uses: mnao305/chrome-extension-upload@v4.0.1
+        with:
+          file-path: better-linkedin.zip
+          extension-id: ${{ secrets.EXTENSION_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+          client-secret: ${{ secrets.CLIENT_SECRET }}
+          refresh-token: ${{ secrets.REFRESH_TOKEN }}
+          publish: false
+
+      - name: Upload ZIP as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: better-linkedin-extension
+          path: better-linkedin.zip
+          retention-days: 5

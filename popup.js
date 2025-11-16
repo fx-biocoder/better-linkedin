@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const removeByCompaniesCheckbox = document.getElementById('removeByCompanies');
     const removeByInteractionsCheckbox = document.getElementById('removeByInteractions');
 
+    const keywordsSection = document.querySelector('.keywords-section');
+    const companiesSection = document.querySelector('.companies-section');
     const newKeywordInput = document.getElementById('newKeyword');
     const addKeywordBtn = document.getElementById('addKeywordBtn');
     const keywordsList = document.getElementById('keywordsList');
@@ -14,14 +16,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const companiesList = document.getElementById('companiesList');
     const donateBtn = document.getElementById('donateBtn');
     const reportBugBtn = document.getElementById('reportBugBtn');
+    const advancedFiltersBtn = document.getElementById('advancedFiltersBtn');
 
     // Load saved settings
     loadSettings();
 
     // Event listeners
     removePromotedCheckbox.addEventListener('change', saveSettings);
-    removeByKeywordsCheckbox.addEventListener('change', saveSettings);
-    removeByCompaniesCheckbox.addEventListener('change', saveSettings);
+    
+    removeByKeywordsCheckbox.addEventListener('change', (e) => {
+        keywordsSection.classList.toggle('visible', e.target.checked);
+        saveSettings();
+    });
+    
+    removeByCompaniesCheckbox.addEventListener('change', (e) => {
+        companiesSection.classList.toggle('visible', e.target.checked);
+        saveSettings();
+    });
+    
     removeByInteractionsCheckbox.addEventListener('change', saveSettings);
 
     addKeywordBtn.addEventListener('click', () => {
@@ -34,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     donateBtn.addEventListener('click', openDonations);
     reportBugBtn.addEventListener('click', reportBug);
+    advancedFiltersBtn.addEventListener('click', openAdvancedFilters);
 
     newKeywordInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') addWord(newKeywordInput, 'keyword', keywordsList);
@@ -60,6 +73,10 @@ document.addEventListener('DOMContentLoaded', function() {
             removeByKeywordsCheckbox.checked = result.removeByKeywords || false;
             removeByCompaniesCheckbox.checked = result.removeByCompanies || false;
             removeByInteractionsCheckbox.checked = result.removeByInteractions || false;
+
+            // Update sections visibility
+            keywordsSection.classList.toggle('visible', removeByKeywordsCheckbox.checked);
+            companiesSection.classList.toggle('visible', removeByCompaniesCheckbox.checked);
 
             // Load muted words
             const mutedWords = result.mutedWords || [];
@@ -191,6 +208,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         chrome.tabs.create({
             url: githubRepoUrl,
+            active: true
+        });
+    }
+
+    // Open advanced filters function
+    function openAdvancedFilters() {
+        chrome.tabs.create({
+            url: chrome.runtime.getURL('advanced-filters.html'),
             active: true
         });
     }
