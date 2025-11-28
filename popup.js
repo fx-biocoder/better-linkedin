@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const removeByKeywordsCheckbox = document.getElementById('removeByKeywords');
     const removeByCompaniesCheckbox = document.getElementById('removeByCompanies');
     const removeByInteractionsCheckbox = document.getElementById('removeByInteractions');
+    const removeAIPostsCheckbox = document.getElementById('removeAIPosts');
+    const removeSuggestedPostsCheckbox = document.getElementById('removeSuggestedPosts');
+    const removePostsWithEmojisCheckbox = document.getElementById('removePostsWithEmojis')
 
     const keywordsSection = document.querySelector('.keywords-section');
     const companiesSection = document.querySelector('.companies-section');
@@ -14,16 +17,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const newCompanyInput = document.getElementById('newCompany');
     const addCompanyBtn = document.getElementById('addCompanyBtn');
     const companiesList = document.getElementById('companiesList');
+
+    const landingBtn = document.getElementById('landingBtn');
     const donateBtn = document.getElementById('donateBtn');
     const reportBugBtn = document.getElementById('reportBugBtn');
-    const advancedFiltersBtn = document.getElementById('advancedFiltersBtn');
 
     // Load saved settings
     loadSettings();
 
     // Event listeners
     removePromotedCheckbox.addEventListener('change', saveSettings);
-    
+   
     removeByKeywordsCheckbox.addEventListener('change', (e) => {
         keywordsSection.classList.toggle('visible', e.target.checked);
         saveSettings();
@@ -36,6 +40,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     removeByInteractionsCheckbox.addEventListener('change', saveSettings);
 
+    removeAIPostsCheckbox.addEventListener('change', saveSettings);
+
+    removeSuggestedPostsCheckbox.addEventListener('change', saveSettings);
+
+    removePostsWithEmojisCheckbox.addEventListener('change', saveSettings);
+
     addKeywordBtn.addEventListener('click', () => {
         addWord(newKeywordInput, 'keyword', keywordsList);
     });
@@ -46,7 +56,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     donateBtn.addEventListener('click', openDonations);
     reportBugBtn.addEventListener('click', reportBug);
-    advancedFiltersBtn.addEventListener('click', openAdvancedFilters);
+
+    landingBtn.addEventListener('click', openLandingPage);
 
     newKeywordInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') addWord(newKeywordInput, 'keyword', keywordsList);
@@ -64,8 +75,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 'removeByKeywords',
                 'removeByCompanies',
                 'removeByInteractions',
+                'removeAIPosts',
+                'removeSuggestedPosts',
+                'removePostsWithEmojis',
                 'mutedWords',
-                'mutedCompanies'
+                'mutedCompanies',
             ]);
 
             // Set checkbox states
@@ -73,6 +87,9 @@ document.addEventListener('DOMContentLoaded', function() {
             removeByKeywordsCheckbox.checked = result.removeByKeywords || false;
             removeByCompaniesCheckbox.checked = result.removeByCompanies || false;
             removeByInteractionsCheckbox.checked = result.removeByInteractions || false;
+            removeAIPostsCheckbox.checked = result.removeAIPosts || false;
+            removeSuggestedPostsCheckbox.checked = result.removeSuggestedPosts || false;
+            removePostsWithEmojisCheckbox.checked = result.removePostsWithEmojis || false;
 
             // Update sections visibility
             keywordsSection.classList.toggle('visible', removeByKeywordsCheckbox.checked);
@@ -103,6 +120,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 removeByKeywords: removeByKeywordsCheckbox.checked,
                 removeByCompanies: removeByCompaniesCheckbox.checked,
                 removeByInteractions: removeByInteractionsCheckbox.checked,
+                removeAIPosts: removeAIPostsCheckbox.checked,
+                removeSuggestedPosts: removeSuggestedPostsCheckbox.checked,
+                removePostsWithEmojis: removePostsWithEmojisCheckbox.checked,
                 mutedWords: mutedWords,
                 mutedCompanies: mutedCompanies
             });
@@ -213,9 +233,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Open advanced filters function
-    function openAdvancedFilters() {
+    function openLandingPage() {
+        const landingPageUrl = 'https://betterlinkedin.vercel.app/';
+
         chrome.tabs.create({
-            url: chrome.runtime.getURL('advanced-filters.html'),
+            url: landingPageUrl,
             active: true
         });
     }

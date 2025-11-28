@@ -17,7 +17,7 @@
 
     const interactions = {
         // English
-        "en": new Set(['likes', 'celebrates', 'insightful', 'funny', 'loves', 'commented', 'supports', 'reacted']),
+        "en": new Set(['likes', 'celebrates', 'insightful', 'finds', 'funny', 'loves', 'commented', 'supports', 'reacted']),
         
         // Spanish
         "es": new Set(['recomienda', 'celebra', 'interesante', 'gracia', 'encanta', 'comentado', 'apoya', 'reaccionado']),
@@ -37,12 +37,8 @@
     ]);
 
     const suggestedWords = new Set([
-        'Suggested'
-    ]);
-
-    const promotedJobWords = new Set([
-        'Promoted'
-    ]);
+        "Suggested"
+    ])
 
     const regexAItext = [
         // Em-dashes. Could lead to false positives but commonly found in AI-generated content
@@ -53,9 +49,12 @@
         /share your thoughts/i,
         /in the comments/i,
         /drop a comment/i,
-        /comenta debajo/i,
+        /curious to know/i,
+        /coment[aá] debajo/i,
         /\b[eé]n (los )?c[oó]m[eé]nt[aá]r[ií]o[s]\b/i,
         /te leo/i,
+        /abro debate/i,
+
 
         // 'When X meets Y' pattern
         /when\s+(\w+)\s+meets\s+(\w+)/i,
@@ -64,15 +63,13 @@
         /in summary/i
     ];
 
+    const regexEmoji = /\p{Emoji}/u;
+
     // CSS selectors to target content to be filtered
     const LINKEDIN_POST_CSS_SELECTOR = 'div.scaffold-finite-scroll__content div';
     const LINKEDIN_POST_BODY_CSS_SELECTOR = 'div.update-components-text.relative.update-components-update-v2__commentary span.break-words.tvm-parent-container span';
     const LINKEDIN_COMPANY_NAME_CSS_SELECTOR = 'div.update-components-actor__container.pr4.display-flex.flex-grow-1 span.update-components-actor__title span.update-components-actor__single-line-truncate span.visually-hidden';
     const LINKEDIN_INTERACTION_POST_CSS_SELECTOR = 'span.update-components-header__text-view';
-
-    // CSS selectors for promoted jobs (linkedin.com/jobs/collections/recommended)
-    const LINKEDIN_JOB_CSS_SELECTOR = 'li.ember-view.occludable-update';
-    const LINKEDIN_JOB_PROMOTED_LABEL_CSS_SELECTOR = 'li.job-card-container__foter-item span';
 
     /**
      * General purpose function to change the visibility of a post
@@ -107,22 +104,22 @@
                 'removeByKeywords',
                 'removeByCompanies',
                 'removeByInteractions',
+                'removeAIPosts',
+                'removeSuggestedPosts',
+                'removePostsWithEmojis',
                 'mutedWords',
                 'mutedCompanies',
-                'filterAIPosts',
-                'filterSuggested',
-                'filterPromotedJobs'
             ]);
             
             settings.removePromoted = result.removePromoted === true;
             settings.removeByKeywords = result.removeByKeywords === true; 
             settings.removeByCompanies = result.removeByCompanies === true;
             settings.removeByInteractions = result.removeByInteractions === true;
+            settings.removeAIPosts = result.removeAIPosts === true;
+            settings.removeSuggested = result.removeSuggestedPosts === true;
+            settings.removePostsWithEmojis = result.removePostsWithEmojis === true;
             settings.mutedWords = result.mutedWords || [];
             settings.mutedCompanies = result.mutedCompanies || [];
-            settings.filterAIPosts = result.filterAIPosts === true;
-            settings.filterSuggested = result.filterSuggested === true;
-            settings.filterPromotedJobs = result.filterPromotedJobs === true;
         } catch (error) {
             console.error('Error loading settings:', error);
         }
@@ -157,22 +154,21 @@
      */
     const removePostsByKeyword = function(post) {
         const postWords = post.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
+        if (!postWords) return false;
 
-        if (postWords) {
-            const regex = /\b\p{L}+\b/gu;
-            const words = postWords.textContent.toLowerCase().match(regex);
-            let containsMutedWord = false;
+        const regex = /\b\p{L}+\b/gu;
+        const words = postWords.textContent.toLowerCase().match(regex) || [];
 
-            for (const word of words) {
-                if (settings.mutedWords.includes(word)) {
-                    containsMutedWord = true;
-                    break;
-                }
+        let containsMutedWord = false;
+        for (const word of words) {
+            if (settings.mutedWords.includes(word)) {
+                containsMutedWord = true;
+                break;
             }
-
-            const result = changeVisibility(post, containsMutedWord, settings.removeByKeywords);
-            return result;
         }
+        const result = changeVisibility(post, containsMutedWord, settings.removeByKeywords);
+        return result;
+        
     }
 
     /**
@@ -228,14 +224,14 @@
      * @param {HTMLElement} post - The LinkedIn post to filter 
      * @returns {boolean} A flag indicating whether the post was hidden or not
      */
-    const filterAIPosts = function(post) {
+    const removeAIPosts = function(post) {
         const postWords = post.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
 
         if (!postWords) return false;
 
         const text = postWords.textContent;
-        const match = regexAItext.some((regex) => regex.test(text));
-        const result = match ? changeVisibility(post, true, settings.filterAIPosts) : false;
+        const match = regexAItext.some(regex => regex.test(text));
+        const result = match ? changeVisibility(post, true, settings.removeAIPosts) : false;
         return result;
     }
 
@@ -245,38 +241,47 @@
      * @param {HTMLElement} post - The LinkedIn post to filter 
      * @returns {boolean} A flag indicating whether the post was hidden or not
      */
-    const filterSuggestedPosts = function(post) {
-        const isSuggested = [...post.querySelectorAll("span")]
-            .some(span => suggestedWords.has(span.textContent));
+    const removeSuggestedPosts = function(post) {
+        const span = post.querySelector(LINKEDIN_INTERACTION_POST_CSS_SELECTOR);
+        if (!span) return false;
 
-        const result = changeVisibility(post, isSuggested, settings.filterSuggested);
+        let isSuggested = false;
+
+        const words = span.textContent
+            .replace(/\n/g, '')
+            .trim();
+
+        if (suggestedWords.has(words)) {
+            isSuggested = true;
+        }
+        // for (const word of words) {
+        //     if (suggestedWords.has(word)) {
+        //         isSuggested = true;
+        //         break;
+        //     }
+        // }
+
+        const result = changeVisibility(post, isSuggested, settings.removeSuggested);
         return result;
     }
 
     /**
-     * Removes promoted jobs
-     * @returns {undefined}
+     * Removes posts containing emojis
+     * @callback CallbackG
+     * @param {HTMLElement} post - The LinkedIn post to filter
+     * @returns {boolean} A flag indicating whether the post was hidden or not
      */
-    const filterPromotedJobs = function() {
-        const jobs = document.querySelectorAll(LINKEDIN_JOB_CSS_SELECTOR);
-        let isPromotedJob = false;
+    const removePostsWithEmojis = function(post) {
+        const postWords = post.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
+        if (!postWords) return false;
 
-        jobs.forEach((job) => {
-            const target = job.querySelector(LINKEDIN_JOB_PROMOTED_LABEL_CSS_SELECTOR);
-
-            if (target) {
-                const label = target.textContent;
-                if (promotedJobWords.has(label)) {
-                    isPromotedJob = true;
-                }
-            }
-
-            changeVisibility(job, isPromotedJob, settings.filterPromotedJobs);
-        });
+        const hasEmoji = regexEmoji.test(postWords.textContent);
+        const result = changeVisibility(post, hasEmoji, settings.removePostsWithEmojis);
+        return result;
     }
 
     /**
-     * @typedef {CallbackA|CallbackB|CallbackC|CallbackD|CallbackE|CallbackF} FilterCallback
+     * @typedef {CallbackA|CallbackB|CallbackC|CallbackD|CallbackE|CallbackF|CallbackG} FilterCallback
      */
 
     /**
@@ -301,13 +306,6 @@
      * @returns {undefined}
      */
     const runFilters = function() {
-        const currentUrl = window.location.href;
-
-        if (currentUrl.includes('linkedin.com/jobs/collections/recommended')) {
-            filterPromotedJobs();
-            return;
-        }
-
         const posts = document.querySelectorAll(LINKEDIN_POST_CSS_SELECTOR);
 
         posts.forEach((post) => {
@@ -318,13 +316,14 @@
             isFlagged = execute(isFlagged, post, removePostsByKeyword);
             isFlagged = execute(isFlagged, post, removePostsByCompanyName);
             isFlagged = execute(isFlagged, post, removeInteractionPosts);
-            isFlagged = execute(isFlagged, post, filterAIPosts);
-            isFlagged = execute(isFlagged, post, filterSuggestedPosts);
+            isFlagged = execute(isFlagged, post, removeAIPosts);
+            isFlagged = execute(isFlagged, post, removeSuggestedPosts);
+            isFlagged = execute(isFlagged, post, removePostsWithEmojis);
         })    
     }
     
     /**
-     * Initializes the content script
+     * Async function for initializing the content script
      * @returns {Promise<void>} A promise that resolves when initialization is complete
      */
     async function initialize() {
@@ -339,36 +338,6 @@
         const observer = new MutationObserver(runFilters);
         observer.observe(document.body, { childList: true, subtree: true });
     }
-
-    // async function initialize() {
-    //     // Load extension settings first
-    //     await loadSettings();
-
-    //     // Helper to ensure body exists before running filters
-    //     function onBodyReady(callback) {
-    //         if (document.body) {
-    //             callback();
-    //         } else {
-    //             const observer = new MutationObserver((mutations, obs) => {
-    //                 if (document.body) {
-    //                     obs.disconnect();
-    //                     callback();
-    //                 }
-    //             });
-    //             observer.observe(document.documentElement, { childList: true });
-    //         }
-    //     }
-
-    //     // Set up filters and mutation observer once body exists
-    //     onBodyReady(() => {
-    //         // Initial run of filters
-    //         runFilters();
-
-    //         // Observe DOM changes to run filters dynamically
-    //         const observer = new MutationObserver(runFilters);
-    //         observer.observe(document.body, { childList: true, subtree: true });
-    //     });
-    // }
     
     // Listen for settings updates from popup
     chrome.runtime.onMessage.addListener((request) => {

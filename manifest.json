@@ -16,11 +16,6 @@
       "matches": ["https://www.linkedin.com/feed/*"],
       "js": ["content.js"],
       "run_at": "document_end"
-    },
-    {
-      "matches": ["https://www.linkedin.com/jobs/*"],
-      "js": ["content.js"],
-      "run_at": "document_end"
     }
   ],
   "action": {

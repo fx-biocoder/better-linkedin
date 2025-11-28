@@ -131,7 +131,6 @@ body {
 
 .help-icon:hover {
     background: #005885;
-    transform: scale(1.1);
 }
 
 .help-icon::before {
@@ -376,7 +375,7 @@ body {
     margin-bottom: 12px;
 }
 
-.advanced-filters-btn {
+.landing-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -395,7 +394,7 @@ body {
     position: relative;
 }
 
-.advanced-filters-btn:hover {
+.landing-btn:hover {
     background: linear-gradient(135deg, #1a365d 0%, #0f2942 100%);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(44, 82, 130, 0.3);
