@@ -10,7 +10,7 @@
     <div class="container">
         <header class="header">
             <h1 class="app-name">Better LinkedIn</h1>
-            <span class="version">v2.0.1</span>
+            <span class="version">v2.1.0</span>
         </header>
         
         <div class="settings-section">
@@ -49,6 +49,33 @@
                     <span class="help-icon" data-tooltip="Hides interactions from contacts">?</span>
                 </label>
             </div>
+
+            <div class="setting-item">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="removeAIPosts">
+                    <span class="checkmark"></span>
+                    Hide AI-generated posts
+                    <span class="help-icon" data-tooltip="This feature is experimental.">?</span>
+                </label>
+            </div>
+            
+            <div class="setting-item">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="removeSuggestedPosts">
+                    <span class="checkmark"></span>
+                    Hide suggested posts
+                    <span class="help-icon" data-tooltip="Hides posts with the 'Suggested' label">?</span>
+                </label>
+            </div>
+
+            <div class="setting-item">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="removePostsWithEmojis">
+                    <span class="checkmark"></span>
+                    Hide posts containing emojis
+                    <span class="help-icon" data-tooltip="Hides characters with the 'Emoji' property (might fail in iOS)">?</span>
+                </label>
+            </div>
         </div>
         
         <div class="keywords-section">
@@ -74,7 +101,11 @@
         </div>
         
         <div class="footer">
-            <p>Improve your LinkedIn feed experience</p>
+            <p>Open-source, tracker-free extension for your LinkedIn feed</p>
+            <button id="landingBtn" class="landing-btn">
+                <span class="filter-icon">⚙️</span>
+                Better LinkedIn's Website
+            </button>
             <button id="donateBtn" class="donate-btn">
                 <span class="donate-icon">💙</span>
                 Support Project

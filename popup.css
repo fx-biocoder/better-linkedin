@@ -47,6 +47,21 @@ body {
     border-bottom: 1px solid #f0f0f0;
 }
 
+.keywords-section,
+.companies-section {
+    display: none;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 10px 15px;
+    border: 1px solid #f0f0f0;
+}
+
+.keywords-section.visible,
+.companies-section.visible {
+    display: block;
+}
+
 .setting-item {
     margin-bottom: 12px;
 }
@@ -116,7 +131,6 @@ body {
 
 .help-icon:hover {
     background: #005885;
-    transform: scale(1.1);
 }
 
 .help-icon::before {
@@ -359,6 +373,35 @@ body {
     color: #666;
     font-style: italic;
     margin-bottom: 12px;
+}
+
+.landing-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    margin-bottom: 16px;
+    font-weight: 500;
+    position: relative;
+}
+
+.landing-btn:hover {
+    background: linear-gradient(135deg, #1a365d 0%, #0f2942 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(44, 82, 130, 0.3);
+}
+
+.filter-icon {
+    font-size: 14px;
 }
 
 .bug-report-btn {
