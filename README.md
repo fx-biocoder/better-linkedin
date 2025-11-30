@@ -2,15 +2,14 @@
 
 A web extension that automatically hides promoted posts and allows you to filter out posts containing specific keywords or company names on LinkedIn™.
 
+Official website: [Better LinkedIn](https://betterlinkedin.vercel.app)
+
 ## Features
 
-- Automatically hides all promoted posts (posts with "Promoted" tag)
-- Filter posts by custom keywords
-- Filter posts by company names
-- Filter posts involving contact interactions (e.g., "A contact finds this insightful")
-- Toggle each filtering option on/off
-- Clean and distraction-free LinkedIn experience
-- Easy-to-use popup interface
+- Rich and diverse set of powerful filters
+- Remove ads and low-quality content (promoted posts, AI spam, etcetera)
+- Easily toggle each filter on or off
+- Cleaner, more relevant LinkedIn experience
 
 ## Installation
 
