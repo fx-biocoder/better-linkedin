@@ -41,7 +41,7 @@ Official website: [Better LinkedIn](https://betterlinkedin.vercel.app)
 4. Select the `manifest.json` file from the extracted folder
 5. The extension will be temporarily installed (reloads after browser restart)
 
-### Method 2: Clone and Build (For Developers)
+### Method 3: Clone and Build (For Developers)
 
 1. **Clone the repository:**
    ```bash
