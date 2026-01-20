@@ -1,5 +1,9 @@
 # Better LinkedIn Changelog
 
+## v2.1.1
+
+- Small update for blocking suggested posts in Spanish.
+
 ## v2.1.0
 
 - New experimental filter to remove AI-generated posts

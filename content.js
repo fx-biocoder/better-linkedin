@@ -37,7 +37,8 @@
     ]);
 
     const suggestedWords = new Set([
-        "Suggested"
+        "Suggested",
+        "Sugerencias"
     ])
 
     const regexAItext = [
