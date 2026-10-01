@@ -37,9 +37,7 @@ If you find a bug, please create an issue with the following information:
 - **Screenshots** if applicable
 - **Environment details**:
   - Browser name and version
-  - Tampermonkey version
   - Operating system
-  - LinkedIn page URL where the issue occurs
 
 ### Suggesting Enhancements
 
@@ -139,30 +137,7 @@ Bad commit messages:
 
 ### Pull Request Template
 
-When creating a pull request, please include:
-
-```markdown
-## Description
-Brief description of what this PR does
-
-## Type of Change
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Enhancement
-- [ ] Documentation update
-
-## Testing
-Describe how you tested your changes
-
-## Screenshots (if applicable)
-Add screenshots to demonstrate the changes
-
-## Checklist
-- [ ] My code follows the style guidelines
-- [ ] I have tested my changes
-- [ ] I have updated the documentation
-- [ ] My changes don't break existing functionality
-```
+When creating a pull request, please include use the pull request template in this repository.
 
 ## Questions?
 
@@ -174,7 +149,7 @@ If you have questions about contributing, feel free to:
 
 ## License
 
-By contributing to Better LinkedIn, you agree that your contributions will be licensed under the same [CC BY-NC 4.0 license](https://creativecommons.org/licenses/by-nc/4.0/) as the project.
+By contributing to Better LinkedIn, you agree that your contributions will be licensed under the same GPL v3.0 license as the project.
 
 ---
 
