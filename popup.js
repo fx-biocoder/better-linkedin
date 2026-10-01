@@ -1,13 +1,14 @@
 // Popup script for Better LinkedIn extension
 document.addEventListener('DOMContentLoaded', function() {
     // DOM elements
-    const removePromotedCheckbox = document.getElementById('removePromoted');
+    const removePromotedJobsCheckbox = document.getElementById('removePromotedJobs');
+    const removePromotedPostsCheckbox = document.getElementById('removePromotedPosts');
     const removeByKeywordsCheckbox = document.getElementById('removeByKeywords');
     const removeByCompaniesCheckbox = document.getElementById('removeByCompanies');
     const removeByInteractionsCheckbox = document.getElementById('removeByInteractions');
     const removeAIPostsCheckbox = document.getElementById('removeAIPosts');
     const removeSuggestedPostsCheckbox = document.getElementById('removeSuggestedPosts');
-    const removePostsWithEmojisCheckbox = document.getElementById('removePostsWithEmojis')
+    const removePostsWithEmojisCheckbox = document.getElementById('removePostsWithEmojis');
 
     const keywordsSection = document.querySelector('.keywords-section');
     const companiesSection = document.querySelector('.companies-section');
@@ -26,7 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
     loadSettings();
 
     // Event listeners
-    removePromotedCheckbox.addEventListener('change', saveSettings);
+    removePromotedJobsCheckbox.addEventListener('change', saveSettings);
+    removePromotedPostsCheckbox.addEventListener('change', saveSettings);
    
     removeByKeywordsCheckbox.addEventListener('change', (e) => {
         keywordsSection.classList.toggle('visible', e.target.checked);
@@ -39,30 +41,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     removeByInteractionsCheckbox.addEventListener('change', saveSettings);
-
     removeAIPostsCheckbox.addEventListener('change', saveSettings);
-
     removeSuggestedPostsCheckbox.addEventListener('change', saveSettings);
-
     removePostsWithEmojisCheckbox.addEventListener('change', saveSettings);
 
     addKeywordBtn.addEventListener('click', () => {
         addWord(newKeywordInput, 'keyword', keywordsList);
     });
-
     addCompanyBtn.addEventListener('click', () => {
         addWord(newCompanyInput, 'company', companiesList);
     });
 
     donateBtn.addEventListener('click', openDonations);
     reportBugBtn.addEventListener('click', reportBug);
-
     landingBtn.addEventListener('click', openLandingPage);
 
     newKeywordInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') addWord(newKeywordInput, 'keyword', keywordsList);
     });
-
     newCompanyInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') addWord(newCompanyInput, 'company', companiesList);
     });
@@ -71,7 +67,8 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadSettings() {
         try {
             const result = await chrome.storage.sync.get([
-                'removePromoted',
+                'removePromotedJobs',
+                'removePromotedPosts',
                 'removeByKeywords',
                 'removeByCompanies',
                 'removeByInteractions',
@@ -83,7 +80,8 @@ document.addEventListener('DOMContentLoaded', function() {
             ]);
 
             // Set checkbox states
-            removePromotedCheckbox.checked = result.removePromoted || false;
+            removePromotedJobsCheckbox.checked = result.removePromotedJobs || false;
+            removePromotedPostsCheckbox.checked = result.removePromotedPosts || false;
             removeByKeywordsCheckbox.checked = result.removeByKeywords || false;
             removeByCompaniesCheckbox.checked = result.removeByCompanies || false;
             removeByInteractionsCheckbox.checked = result.removeByInteractions || false;
@@ -116,7 +114,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 .map(el => el.textContent);
 
             await chrome.storage.sync.set({
-                removePromoted: removePromotedCheckbox.checked,
+                removePromotedJobs: removePromotedJobsCheckbox.checked,
+                removePromotedPosts: removePromotedPostsCheckbox.checked,
                 removeByKeywords: removeByKeywordsCheckbox.checked,
                 removeByCompanies: removeByCompaniesCheckbox.checked,
                 removeByInteractions: removeByInteractionsCheckbox.checked,
@@ -206,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Notify content script of changes
     function notifyContentScript() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            if (tabs[0] && tabs[0].url.includes('linkedin.com/feed')) {
+            if (tabs[0] && tabs[0].url.includes('linkedin.com/')) {
                 chrome.tabs.sendMessage(tabs[0].id, {
                     action: 'settingsUpdated'
                 });

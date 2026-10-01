@@ -4,19 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Better LinkedIn</title>
-    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="styles/popup.css">
 </head>
 <body>
     <div class="container">
         <header class="header">
             <h1 class="app-name">Better LinkedIn</h1>
-            <span class="version">v2.1.1</span>
+            <span class="version">v2.2.0</span>
         </header>
         
         <div class="settings-section">
             <div class="setting-item">
                 <label class="checkbox-label">
-                    <input type="checkbox" id="removePromoted">
+                    <input type="checkbox" id="removePromotedJobs">
+                    <span class="checkmark"></span>
+                    Hide promoted jobs
+                    <span class="help-icon" data-tooltip="Automatically hides promoted jobs">?</span>
+                </label>
+            </div>
+
+            <div class="setting-item">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="removePromotedPosts">
                     <span class="checkmark"></span>
                     Hide promoted posts
                     <span class="help-icon" data-tooltip="Automatically hides posts marked as 'Promoted' on LinkedIn">?</span>
