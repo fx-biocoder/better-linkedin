@@ -1,6 +1,6 @@
 # Better LinkedIn
 
-A web extension that automatically hides promoted posts and allows you to filter out posts containing specific keywords or company names on LinkedIn™.
+A web extension that automatically hides promoted posts and allows you to filter out posts containing specific keywords or company names on LinkedIn™. It also allows you to block promoted jobs.
 
 Official website: [Better LinkedIn](https://betterlinkedin.vercel.app)
 
@@ -57,13 +57,8 @@ Once installed:
 
 1. **Navigate to LinkedIn:** Go to [LinkedIn Feed](https://www.linkedin.com/feed/)
 2. **Open the extension:** Click the Better LinkedIn icon in your browser toolbar
-3. **Configure settings:**
-   - ✅ Check "Hide promoted posts" to automatically hide sponsored content
-   - ✅ Check "Hide posts by muted words" to filter posts containing specific keywords
-   - ✅ Check "Hide posts by muted companies" to filter posts from specific companies
-   - Add keywords in the "Muted Words" section
-   - Add company names in the "Muted Companies" section
-4. **Save and enjoy:** Settings are automatically saved and applied immediately
+3. **Configure settings:** Select the filters you wish the apply
+4. **Enjoy:** Settings are automatically saved and applied immediately
 
 The extension works in real-time, continuously monitoring for new posts as they load.
 
@@ -114,7 +109,7 @@ Contributions are welcome! Feel free to:
 
 ## License
 
-This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/).
+This project is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html).
 
 ## Support
 
