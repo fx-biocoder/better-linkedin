@@ -10,15 +10,19 @@
     <div class="container">
         <header class="header">
             <h1 class="app-name">Better LinkedIn</h1>
-            <span class="version">v2.2.0</span>
+            <span class="version">v3.0.0</span>
         </header>
         
+        <div class="session-stats" style="text-align: center; padding: 10px; background: #e8f4f9; border-bottom: 1px solid #d0e8f2; font-size: 14px; color: #0077b5;">
+            <span data-i18n="popPostsHidden">Posts hidden this session: </span><strong id="sessionPostsHidden">0</strong>
+        </div>
+
         <div class="settings-section">
             <div class="setting-item">
                 <label class="checkbox-label">
                     <input type="checkbox" id="removePromotedJobs">
                     <span class="checkmark"></span>
-                    Hide promoted jobs
+                    <span data-i18n="popHidePromotedJobs">Hide promoted jobs</span>
                     <span class="help-icon" data-tooltip="Automatically hides promoted jobs">?</span>
                 </label>
             </div>
@@ -27,7 +31,7 @@
                 <label class="checkbox-label">
                     <input type="checkbox" id="removePromotedPosts">
                     <span class="checkmark"></span>
-                    Hide promoted posts
+                    <span data-i18n="popHidePromotedPosts">Hide promoted posts</span>
                     <span class="help-icon" data-tooltip="Automatically hides posts marked as 'Promoted' on LinkedIn">?</span>
                 </label>
             </div>
@@ -36,7 +40,7 @@
                 <label class="checkbox-label">
                     <input type="checkbox" id="removeByKeywords">
                     <span class="checkmark"></span>
-                    Hide posts by muted words
+                    <span data-i18n="popHideMutedWords">Hide posts by muted words</span>
                     <span class="help-icon" data-tooltip="Hides posts containing words from your muted list">?</span>
                 </label>
             </div>
@@ -45,7 +49,7 @@
                 <label class="checkbox-label">
                     <input type="checkbox" id="removeByCompanies">
                     <span class="checkmark"></span>
-                    Hide posts by muted companies
+                    <span data-i18n="popHideMutedCompanies">Hide posts by muted companies</span>
                     <span class="help-icon" data-tooltip="Hides posts from muted companies">?</span>
                 </label>
             </div>
@@ -54,7 +58,7 @@
                 <label class="checkbox-label">
                     <input type="checkbox" id="removeByInteractions">
                     <span class="checkmark"></span>
-                    Hide posts by interactions
+                    <span data-i18n="popHideInteractions">Hide posts by interactions</span>
                     <span class="help-icon" data-tooltip="Hides interactions from contacts">?</span>
                 </label>
             </div>
@@ -63,7 +67,7 @@
                 <label class="checkbox-label">
                     <input type="checkbox" id="removeAIPosts">
                     <span class="checkmark"></span>
-                    Hide AI-generated posts
+                    <span data-i18n="popHideAIPosts">Hide AI-generated posts</span>
                     <span class="help-icon" data-tooltip="This feature is experimental.">?</span>
                 </label>
             </div>
@@ -72,7 +76,7 @@
                 <label class="checkbox-label">
                     <input type="checkbox" id="removeSuggestedPosts">
                     <span class="checkmark"></span>
-                    Hide suggested posts
+                    <span data-i18n="popHideSuggested">Hide suggested posts</span>
                     <span class="help-icon" data-tooltip="Hides posts with the 'Suggested' label">?</span>
                 </label>
             </div>
@@ -81,17 +85,17 @@
                 <label class="checkbox-label">
                     <input type="checkbox" id="removePostsWithEmojis">
                     <span class="checkmark"></span>
-                    Hide posts containing emojis
+                    <span data-i18n="popHideEmojis">Hide posts containing emojis</span>
                     <span class="help-icon" data-tooltip="Hides characters with the 'Emoji' property (might fail in iOS)">?</span>
                 </label>
             </div>
         </div>
         
         <div class="keywords-section">
-            <h3>Muted Words</h3>
+            <h3 data-i18n="popMutedWords">Muted Words</h3>
             <div class="add-keyword">
                 <input type="text" id="newKeyword" placeholder="Enter a word to mute...">
-                <button id="addKeywordBtn">Add</button>
+                <button id="addKeywordBtn" data-i18n="popAddWord">Add</button>
             </div>
             <div class="keywords-list" id="keywordsList">
                 <!-- Keywords will be populated here -->
@@ -99,10 +103,10 @@
         </div>
         
         <div class="companies-section">
-            <h3>Muted Companies</h3>
+            <h3 data-i18n="popMutedCompanies">Muted Companies</h3>
             <div class="add-company">
                 <input type="text" id="newCompany" placeholder="Enter a company name to mute...">
-                <button id="addCompanyBtn">Add</button>
+                <button id="addCompanyBtn" data-i18n="popAddCompany">Add</button>
             </div>
             <div class="companies-list" id="companiesList">
                 <!-- Companies will be populated here -->
@@ -110,22 +114,27 @@
         </div>
         
         <div class="footer">
-            <p>Open-source, tracker-free extension for your LinkedIn feed</p>
-            <button id="landingBtn" class="landing-btn">
+            <p data-i18n="popFooterDesc">Open-source, tracker-free extension for your LinkedIn feed</p>
+            <button id="advancedBtn" class="landing-btn" style="margin-bottom: 8px;">
                 <span class="filter-icon">⚙️</span>
-                Better LinkedIn's Website
+                <span data-i18n="popAdvanced">Advanced Filters...</span>
+            </button>
+            <button id="landingBtn" class="landing-btn">
+                <span class="filter-icon">🌐</span>
+                <span data-i18n="popWebsite">Better LinkedIn's Website</span>
             </button>
             <button id="donateBtn" class="donate-btn">
                 <span class="donate-icon">💙</span>
-                Support Project
+                <span data-i18n="popSupport">Support Project</span>
             </button>
             <button id="reportBugBtn" class="bug-report-btn">
                 <span class="bug-icon">🐛</span>
-                Report Bug
+                <span data-i18n="popReport">Report Bug</span>
             </button>
         </div>
     </div>
     
+    <script src="utils/i18n.js"></script>
     <script src="popup.js"></script>
 </body>
 </html>

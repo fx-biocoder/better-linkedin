@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Better LinkedIn - Advanced Settings</title>
+    <link rel="stylesheet" href="styles/options.css">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2 data-i18n="dashboardTitle">Better LinkedIn</h2>
+                <span class="version">v3.0.0</span>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-tab="settings-feed">
+                    <span>📰</span> <span data-i18n="dashFeedFilters">Feed Filters</span>
+                </button>
+                <button class="nav-item" data-tab="settings-jobs">
+                    <span>💼</span> <span data-i18n="dashJobFilters">Job Filters</span>
+                </button>
+                <button class="nav-item" data-tab="settings-profiles">
+                    <span>👤</span> <span data-i18n="dashProfileFilters">Profile Filters</span>
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="whats-new.html" target="_blank" class="nav-item">
+                    <span>✨</span> <span data-i18n="whatsnewUpdates">What's New</span>
+                </a>
+                <a href="https://betterlinkedin.vercel.app" target="_blank" class="nav-item">
+                    <span>🌐</span> <span data-i18n="welcomeBtn">Visit our Website</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="content">
+            <!-- Feed Filters Tab -->
+            <section id="settings-feed" class="tab-content active">
+                <div class="header-card">
+                    <h1 data-i18n="dashFeedFilters">Feed Filters</h1>
+                    <p data-i18n="dashFeedDesc">Advanced settings for your LinkedIn feed.</p>
+                </div>
+
+                <div class="stats-card">
+                    <h3 data-i18n="dashImpact">Impact</h3>
+                    <p><span data-i18n="dashPostsHidden">Total posts hidden across all sessions: </span><strong id="totalPostsHidden">0</strong></p>
+                </div>
+
+                <div class="settings-group">
+                    <div class="setting-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="removeBroetryPosts">
+                            <span class="slider"></span>
+                        </label>
+                        <div class="setting-info">
+                            <span class="setting-name" data-i18n="dashHideBroetry">Hide "Broetry" & Engagement Bait</span>
+                            <span class="setting-desc" data-i18n="dashHideBroetryDesc">Hides posts with excessive line breaks or generic engagement bait like "Agree?" or "Thoughts?".</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Job Filters Tab -->
+            <section id="settings-jobs" class="tab-content">
+                <div class="header-card">
+                    <h1 data-i18n="dashJobFilters">Job Filters</h1>
+                    <p data-i18n="dashJobDesc">Enhance your job search experience.</p>
+                </div>
+
+                <div class="settings-group">
+                    <div class="setting-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="jobAgeAlerts">
+                            <span class="slider"></span>
+                        </label>
+                        <div class="setting-info">
+                            <span class="setting-name" data-i18n="dashHideOldJobs">Hide Old Jobs</span>
+                            <span class="setting-desc" data-i18n="dashHideOldJobsDesc">Hides job postings that are more than 30 days old from your job lists.</span>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="jobRedFlags">
+                            <span class="slider"></span>
+                        </label>
+                        <div class="setting-info">
+                            <span class="setting-name" data-i18n="dashRedFlags">Red Flag Warnings</span>
+                            <span class="setting-desc" data-i18n="dashRedFlagsDesc">Shows a warning if a job description contains concerning keywords (e.g., "ninja", "work under pressure").</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Filters Tab -->
+            <section id="settings-profiles" class="tab-content">
+                <div class="header-card">
+                    <h1 data-i18n="dashProfileFilters">Profile Filters</h1>
+                    <p data-i18n="dashProfileDesc">Manage how you view profiles.</p>
+                </div>
+
+                <div class="settings-group">
+                    <div class="setting-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="detectFakeProfiles">
+                            <span class="slider"></span>
+                        </label>
+                        <div class="setting-info">
+                            <span class="setting-name" data-i18n="dashSuspicious">Suspicious Profile Warnings</span>
+                            <span class="setting-desc" data-i18n="dashSuspiciousDesc">Shows a warning if a profile seems suspicious (e.g., low connections, no photo).</span>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="enableProfileNotes">
+                            <span class="slider"></span>
+                        </label>
+                        <div class="setting-info">
+                            <span class="setting-name" data-i18n="dashNotesTags">Private Notes & Tags</span>
+                            <span class="setting-desc" data-i18n="dashNotesTagsDesc">Allows you to add private notes and tags to profiles.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="utils/i18n.js"></script>
+    <script src="options.js"></script>
+</body>
+</html>

@@ -4,7 +4,9 @@
     'use strict';
 
     let settings = {
-        removePromotedJobs: false
+        removePromotedJobs: false,
+        jobAgeAlerts: false,
+        jobRedFlags: false
     };
 
     const promotedWords = new Set([
@@ -15,7 +17,7 @@
     ]);
 
     // CSS selectors
-    const LINKEDIN_JOB_CSS_SELECTOR = 'div[data-display-contents="true"] a[tabindex="0"]';
+    const LINKEDIN_JOB_CSS_SELECTOR = 'div[data-display-contents="true"] a[tabindex="0"], div[componentkey^="job-card-component-ref-"]';
     const LINKEDIN_JOB_COLLECTIONS_CSS_SELECTOR = 'li.ember-view';
 
     /**
@@ -28,12 +30,14 @@
     const changeVisibility = function(job, status, settingValue) {
         let hidden = false;
 
+        const target = job.closest('li.ember-view') || job.closest('div[data-display-contents="true"]') || job;
+
         if (status) {
             if (settingValue) {
-                job.style.display = 'none';
+                target.style.display = 'none';
                 hidden = true;
             } else {
-                job.style.display = '';
+                target.style.display = '';
             }
         }
 
@@ -47,10 +51,14 @@
     async function loadSettings() {
         try {
             const result = await chrome.storage.sync.get([
-                'removePromotedJobs'
+                'removePromotedJobs',
+                'jobAgeAlerts',
+                'jobRedFlags'
             ]);
 
             settings.removePromotedJobs = result.removePromotedJobs === true;
+            settings.jobAgeAlerts = result.jobAgeAlerts === true;
+            settings.jobRedFlags = result.jobRedFlags === true;
         } catch (error) {
             console.error('Error loading settings: ', error);
         }
@@ -135,6 +143,27 @@
         }
     }
 
+    const removeOldJobs = function(job) {
+        const elements = job.querySelectorAll('time, span, div, p');
+        if (!elements) return false;
+
+        let isOld = false;
+
+        for (const el of elements) {
+            const text = el.textContent.trim().toLowerCase();
+            if (text.length > 40) continue;
+
+            if ((text.includes(' ago') || text.includes('hace ')) && 
+                (text.includes('month') || text.includes('mes') || (text.includes('day') && parseInt(text.replace(/\D/g,'')) > 30) || (text.includes('día') && parseInt(text.replace(/\D/g,'')) > 30))) {
+                isOld = true;
+                break;
+            }
+        }
+
+        const result = changeVisibility(job, isOld, settings.jobAgeAlerts);
+        return result;
+    }
+
     /**
      * Main filtering function
      * @returns {undefined}
@@ -146,6 +175,7 @@
             let isFlagged = false;
             // Run filters sequentially and conditionally
             isFlagged = execute(isFlagged, job, removePromotedJobs);
+            isFlagged = execute(isFlagged, job, removeOldJobs);
         });
 
         const jobsFromJobCollections = document.querySelectorAll(LINKEDIN_JOB_COLLECTIONS_CSS_SELECTOR);
@@ -154,9 +184,68 @@
             let isFlagged = false;
 
             isFlagged = execute(isFlagged, job, removePromotedJobFromCollections);
+            isFlagged = execute(isFlagged, job, removeOldJobs);
         });
 
+        processJobPanel();
     }
+
+    const injectWarningBanner = (container, message, isRedFlag) => {
+        if (!container) return;
+        const existing = container.querySelector(`.bl-warning-banner[data-msg="${message}"]`);
+        if (existing) return;
+        
+        const banner = document.createElement('div');
+        banner.className = 'bl-warning-banner';
+        banner.dataset.msg = message;
+        banner.style.padding = '12px 16px';
+        banner.style.margin = '16px 0';
+        banner.style.borderRadius = '8px';
+        banner.style.backgroundColor = '#0077b5';
+        banner.style.color = '#ffffff';
+        banner.style.border = '1px solid #00a0dc';
+        banner.style.fontWeight = '500';
+        banner.style.fontSize = '14px';
+        banner.innerHTML = `<strong>${t('alertPrefix')}</strong> ${message}`;
+        
+        container.prepend(banner);
+    };
+
+    const processJobPanel = () => {
+        // Find action buttons (Save or Apply) to locate the top card
+        const buttons = Array.from(document.querySelectorAll('button'));
+        const actionBtns = buttons.filter(b => {
+            const label = b.getAttribute('aria-label');
+            return label && (label.toLowerCase().includes('save') || label.toLowerCase().includes('guardar') || label.toLowerCase().includes('apply') || label.toLowerCase().includes('solicitar') || label.toLowerCase().includes('postular')) && !b.classList.contains('bl-save-btn');
+        });
+
+        if (actionBtns.length === 0) return;
+        
+        const mainActionBtn = actionBtns[0];
+        const actionContainer = mainActionBtn.parentElement;
+        
+        let topCard = actionContainer;
+        for (let i = 0; i < 10; i++) {
+            if (topCard.parentElement && topCard.parentElement.tagName !== 'MAIN' && topCard.parentElement.tagName !== 'BODY') {
+                topCard = topCard.parentElement;
+            }
+        }
+
+
+
+        // Red Flags
+        if (settings.jobRedFlags) {
+            const text = document.body.textContent.toLowerCase();
+            const flags = ['ninja', 'rockstar', 'guru', 'work under pressure', 'trabajar bajo presión', 'fast-paced environment', 'multitasking', 'multi-tasking', 'multitasker', 'no remunerado', 'no remunerada'];
+            const found = flags.filter(f => text.includes(f));
+            if (found.length > 0) {
+                injectWarningBanner(topCard, `${t('redFlagsDetected')}${found.join(', ')}`, true);
+            }
+        }
+        
+    };
+
+
 
     /**
      * Async function for initializing the content script
@@ -170,14 +259,18 @@
             setTimeout(runFilters, 3000);
         });
 
-        // Set up mutation observer
-        const observer = new MutationObserver(runFilters);
+        // Set up mutation observer with debounce
+        let timeout = null;
+        const observer = new MutationObserver(() => {
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(runFilters, 100);
+        });
         observer.observe(document.body, { childList: true, subtree: true });
     }
 
-    // Listen for settings updates from popup
+    // Listen for settings updates from popup/options
     chrome.runtime.onMessage.addListener((request) => {
-        if (request.action === 'settingsUpdated') loadSettings().then(() => {
+        if (request.action === 'settingsUpdated' || request.action === 'advancedSettingsUpdated') loadSettings().then(() => {
             runFilters();
         })
     });

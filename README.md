@@ -1,15 +1,16 @@
 # Better LinkedIn
 
-A web extension that automatically hides promoted posts and allows you to filter out posts containing specific keywords or company names on LinkedIn™.
+A web extension that automatically hides promoted posts, filters out unwanted content, and enhances your LinkedIn™ experience with advanced tools like private notes and AI image detection.
 
 Official website: [Better LinkedIn](https://betterlinkedin.vercel.app)
 
 ## Features
 
-- Rich and diverse set of powerful filters
-- Remove ads and low-quality content (promoted posts, AI spam, etcetera)
-- Easily toggle each filter on or off
-- Cleaner, more relevant LinkedIn experience
+- **Advanced Feed Filters:** Automatically remove promoted posts, suggested posts, AI-generated spam, and posts containing specific keywords, companies, emojis, or "Broetry" (engagement bait with excessive line breaks).
+- **Job Search Enhancements:** Hide jobs older than 30 days and automatically detect red flags in job descriptions (e.g., "ninja", "work under pressure").
+- **Profile Tools:** Add Private Notes and Tags to profiles (stored locally), and detect suspicious or AI-generated profile pictures.
+- **Full Internationalization (i18n):** Available in English, Spanish, Portuguese, and Italian.
+- **Privacy First:** All processing is done locally. No user data is collected or shared.
 
 ## Installation
 
@@ -51,40 +52,18 @@ Official website: [Better LinkedIn](https://betterlinkedin.vercel.app)
 
 2. **Install in your browser** (follow the same steps as Method 1)
 
-## Usage
+## Usage & Configuration
 
-Once installed:
+Once installed, Better LinkedIn runs automatically in the background.
 
-1. **Navigate to LinkedIn:** Go to [LinkedIn Feed](https://www.linkedin.com/feed/)
-2. **Open the extension:** Click the Better LinkedIn icon in your browser toolbar
-3. **Configure settings:**
-   - ✅ Check "Hide promoted posts" to automatically hide sponsored content
-   - ✅ Check "Hide posts by muted words" to filter posts containing specific keywords
-   - ✅ Check "Hide posts by muted companies" to filter posts from specific companies
-   - Add keywords in the "Muted Words" section
-   - Add company names in the "Muted Companies" section
-4. **Save and enjoy:** Settings are automatically saved and applied immediately
+1. **Basic Toggles:** Click the Better LinkedIn icon in your browser toolbar to quickly enable/disable common filters or add Muted Words and Companies.
+2. **Advanced Dashboard:** Click the "Advanced Settings" gear icon in the popup to open the full dashboard. Here you can configure:
+   - **Feed Filters:** Toggle Broetry filters, interaction filters, etc.
+   - **Job Filters:** Enable Red Flag warnings and age filters for job hunts.
+   - **Profile Filters:** Enable Private Notes and AI profile picture detection.
+3. **Private Notes:** When visiting a LinkedIn profile, a new panel will appear allowing you to save local notes and tags for that candidate or connection.
 
-The extension works in real-time, continuously monitoring for new posts as they load.
-
-## Configuration
-
-### Adding Muted Words
-- Type a word in the "Muted Words" input field
-- Click "Add" or press Enter
-- Posts containing this word will be hidden
-- Remove words by clicking the "×" button
-
-### Adding Muted Companies
-- Type a company name in the "Muted Companies" input field
-- Click "Add" or press Enter
-- Posts from this company will be hidden
-- Remove companies by clicking the "×" button
-
-### Toggle Options
-- Each filtering option can be enabled/disabled independently
-- Changes take effect immediately
-- Settings are saved automatically
+All settings are saved automatically and applied in real-time.
 
 ## Troubleshooting
 
@@ -96,13 +75,9 @@ The extension works in real-time, continuously monitoring for new posts as they 
 
 **Some posts still showing?**
 - LinkedIn may change their HTML structure occasionally
-- Make sure the filtering options are enabled in the popup
+- Make sure the filtering options are enabled in the dashboard
 - Check that company names match exactly (case-sensitive)
 - Report issues using the "Report Bug" button in the extension popup
-
-**Extension not appearing in browser?**
-- For Chrome: Check `chrome://extensions/` and ensure it's enabled
-- For Firefox: Check `about:addons` and ensure it's enabled
 
 ## Contributing
 

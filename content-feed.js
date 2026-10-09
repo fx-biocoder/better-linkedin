@@ -11,8 +11,11 @@
         mutedWords: [],
         mutedCompanies: [],
         removeAIPosts: false,
-        removeSuggested: false
+        removeSuggested: false,
+        removeBroetryPosts: false
     };
+
+    let sessionPostsHidden = 0;
 
     const interactions = {
         // English
@@ -71,28 +74,6 @@
     const LINKEDIN_POST_BODY_CSS_SELECTOR = 'span[data-testid="expandable-text-box"]';
 
     /**
-     * General purpose function to change the visibility of a post
-     * @param {HTMLElement} post - The LinkedIn post to filter
-     * @param {boolean} status - A flag that indicates whether the post meets the filter criteria
-     * @param {boolean} settingValue - A flag indicating whether the filter is enabled
-     * @returns {boolean} A flag indicating whether the post was hidden or not
-     */
-    const changeVisibility = function(post, status, settingValue) {
-        let hidden = false;
-
-        if (status) {
-            if (settingValue) {
-                post.style.display = 'none';
-                hidden = true;
-            } else {
-                post.style.display = '';
-            }
-        }
-
-        return hidden;
-    }
-
-    /**
      * Loads the extension settings from the browser's synchronized storage
      * @return {Promise<void>} A promise that resolves when settings are loaded
      */
@@ -119,6 +100,9 @@
             settings.removePostsWithEmojis = result.removePostsWithEmojis === true;
             settings.mutedWords = result.mutedWords || [];
             settings.mutedCompanies = result.mutedCompanies || [];
+
+            const syncResult = await chrome.storage.sync.get(['removeBroetryPosts']);
+            settings.removeBroetryPosts = syncResult.removeBroetryPosts === true;
         } catch (error) {
             console.error('Error loading settings:', error);
         }
@@ -134,213 +118,126 @@
             .trim();
     }
 
-    /**
-     * Removes promoted posts from the LinkedIn feed
-     * @callback CallbackA
-     * @param {HTMLElement} post - The LinkedIn post to filter
-     * @returns {boolean} A flag indicating whether the post was hidden or not
-     */
-    const removePromotedPosts = function(post) {
-        const spans = post.querySelectorAll('p > span');
-        let isPromoted = false;
 
+    const removePromotedPosts = function(post) {
+        if (!settings.removePromoted) return false;
+        const spans = post.querySelectorAll('p > span');
         for (const span of spans) {
             const text = normalizeText(span.textContent);
-            if (text.length > 150) continue; // safety check to skip huge text blocks
-
+            if (text.length > 150) continue;
             for (const word of promotedWords) {
                 if (text === word || text.startsWith(word + ' ')) {
-                    isPromoted = true;
-                    break;
+                    return true;
                 }
             }
-            if (isPromoted) break;
         }
-
-        const result = changeVisibility(post, isPromoted, settings.removePromoted);
-        return result;
+        return false;
     }
-    
-    /**
-     * Removes post by keyword
-     * @callback CallbackB
-     * @param {HTMLElement} post - The LinkedIn post to filter
-     * @returns {boolean} A flag indicating whether the post was hidden or not
-     */
+
     const removePostsByKeyword = function(post) {
+        if (!settings.removeByKeywords) return false;
         const postWords = post.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
         if (!postWords) return false;
-
         const regex = /\b\p{L}+\b/gu;
-
         const words = postWords.textContent.toLowerCase().match(regex) || [];
-
-        let containsMutedWord = false;
         for (const word of words) {
             if (settings.mutedWords.includes(word)) {
-                containsMutedWord = true;
-                break;
+                return true;
             }
         }
-        const result = changeVisibility(post, containsMutedWord, settings.removeByKeywords);
-        return result;
-        
+        return false;
     }
 
-    /**
-     * Removes posts by company name
-     * @callback CallbackC
-     * @param {HTMLElement} post - The LinkedIn post to filter
-     * @returns {boolean} A flag indicating whether the post was hidden or not
-     */
     const removePostsByCompanyName = function(post) {
+        if (!settings.removeByCompanies) return false;
         const spans = post.querySelectorAll('p > span');
-        let isMutedCompany = false;
-
         for (const span of spans) {
             const text = normalizeText(span.textContent);
             if (text && settings.mutedCompanies.includes(text)) {
-                isMutedCompany = true;
-                break;
+                return true;
             }
         }
-
-        const result = changeVisibility(post, isMutedCompany, settings.removeByCompanies);
-        return result;
+        return false;
     }
 
-    /**
-     * Removes interaction posts
-     * @callback CallbackD
-     * @param {HTMLElement} post - The LinkedIn post to filter 
-     * @returns {boolean} A flag indicating whether the post was hidden or not
-     */
     const removeInteractionPosts = function(post) {
+        if (!settings.removeByInteractions) return false;
         const spans = post.querySelectorAll('p > span');
         const lang = document.documentElement.lang;
-
-        // Fall back to English if the page language has no interaction word list
         const langInteractions = interactions[lang] || interactions['en'];
-
         for (const span of spans) {
             const text = normalizeText(span.textContent);
-            if (text.length > 150) continue; // safety check
-            
+            if (text.length > 150) continue; 
             const words = text.split(' ');
-
             for (const word of words) {
                 if (langInteractions.has(word)) {
-                    const result = changeVisibility(post, true, settings.removeByInteractions);
-                    return result;
+                    return true;
                 }
             }
         }
-
         return false;
     }
 
-    /**
-     * Filters AI-generated posts
-     * @callback CallbackE
-     * @param {HTMLElement} post - The LinkedIn post to filter 
-     * @returns {boolean} A flag indicating whether the post was hidden or not
-     */
     const removeAIPosts = function(post) {
+        if (!settings.removeAIPosts) return false;
         const postWords = post.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
-
         if (!postWords) return false;
-
         const text = postWords.textContent;
-        const match = regexAItext.some(regex => regex.test(text));
-        const result = changeVisibility(post, match, settings.removeAIPosts);
-        return result;
+        return regexAItext.some(regex => regex.test(text));
     }
 
-    /**
-     * Removes suggested posts
-     * @callback CallbackF
-     * @param {HTMLElement} post - The LinkedIn post to filter 
-     * @returns {boolean} A flag indicating whether the post was hidden or not
-     */
     const removeSuggestedPosts = function(post) {
+        if (!settings.removeSuggested) return false;
         const spans = post.querySelectorAll('p > span');
-
         for (const span of spans) {
             const text = normalizeText(span.textContent);
-            if (text.length > 150) continue; // safety check
-
+            if (text.length > 150) continue;
             if (suggestedWords.has(text)) {
-                const result = changeVisibility(post, true, settings.removeSuggested);
-                return result;
+                return true;
             }
         }
-
         return false;
     }
 
-    /**
-     * Removes posts containing emojis
-     * @callback CallbackG
-     * @param {HTMLElement} post - The LinkedIn post to filter
-     * @returns {boolean} A flag indicating whether the post was hidden or not
-     */
     const removePostsWithEmojis = function(post) {
+        if (!settings.removePostsWithEmojis) return false;
         const postWords = post.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
         if (!postWords) return false;
-
-        const hasEmoji = regexEmoji.test(postWords.textContent);
-        const result = changeVisibility(post, hasEmoji, settings.removePostsWithEmojis);
-        return result;
+        return regexEmoji.test(postWords.textContent);
     }
 
-    /**
-     * @typedef {CallbackA|CallbackB|CallbackC|CallbackD|CallbackE|CallbackF|CallbackG} FilterCallback
-     */
+    const regexBroetryWords = /agree\?|thoughts\?|¿estás de acuerdo\?|¿qué opinas\?/i;
 
-    /**
-     * Function for conditionally executing a filter
-     * @param {boolean} flag - Current flag status for conditionally executing the callback
-     * @param {HTMLElement} post - The LinkedIn post to filter
-     * @param {FilterCallback} callback - The callback (i.e., a filter function) to execute.
-     *        It receives a post as parameter and returns a boolean indicating whether the post was hidden. 
-     * @returns {boolean} The result of applying the filter: 'true' if the post was hidden, 'false' otherwise
-     */
-    const execute = (flag, post, callback) => {
-        if (flag) {
+    const removeBroetryPosts = function(post) {
+        if (!settings.removeBroetryPosts) return false;
+        const postWords = post.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
+        if (!postWords) return false;
+        const text = postWords.textContent;
+        const html = postWords.innerHTML;
+        if (regexBroetryWords.test(text)) {
             return true;
-        } else {
-            const result = callback(post);
-            return result;
         }
+        const brCount = (html.match(/<br\s*\/?>/gi) || []).length;
+        if (brCount > 6) {
+            return true;
+        }
+        return false;
     }
-    
-    /**
-     * Main filtering function
-     * @returns {undefined}
-     */
+
+    const execute = (flag, post, callback) => {
+        if (flag) return true;
+        return callback(post);
+    }
+
     const runFilters = function() {
         const feed = document.querySelector(LINKEDIN_MAIN_FEED_CSS_SELECTOR);
-        if (!feed) {
-            console.log('[BetterLinkedIn] Feed element not found with selector:', LINKEDIN_MAIN_FEED_CSS_SELECTOR);
-            return;
-        }
-        const posts = [...feed.querySelectorAll(LINKEDIN_POST_CONTAINERS_CSS_SELECTOR)];
-        console.log(`[BetterLinkedIn] Found ${posts.length} posts with selector: ${LINKEDIN_POST_CONTAINERS_CSS_SELECTOR}`);
+        if (!feed) return;
 
-        if (posts.length === 0) {
-            // Fallback: try all role=listitem descendants
-            const allListItems = [...feed.querySelectorAll('[role="listitem"]')];
-            console.log(`[BetterLinkedIn] Fallback: found ${allListItems.length} [role=listitem] elements`);
-            if (allListItems.length > 0) {
-                console.log('[BetterLinkedIn] First listitem attributes:', allListItems[0].attributes.length, 
-                    [...allListItems[0].attributes].map(a => `${a.name}="${a.value.substring(0,30)}"`).join(', '));
-            }
-        }
+        const posts = [...feed.querySelectorAll(LINKEDIN_POST_CONTAINERS_CSS_SELECTOR)];
 
         posts.forEach((post) => {
             let isFlagged = false;
-                    
-            // Run filters sequentially and conditionally
+            
             isFlagged = execute(isFlagged, post, removePromotedPosts);
             isFlagged = execute(isFlagged, post, removePostsByKeyword);
             isFlagged = execute(isFlagged, post, removePostsByCompanyName);
@@ -348,9 +245,24 @@
             isFlagged = execute(isFlagged, post, removeAIPosts);
             isFlagged = execute(isFlagged, post, removeSuggestedPosts);
             isFlagged = execute(isFlagged, post, removePostsWithEmojis);
-        })    
+            isFlagged = execute(isFlagged, post, removeBroetryPosts);
+            
+            if (isFlagged) {
+                if (post.style.display !== 'none') {
+                    post.style.display = 'none';
+                    sessionPostsHidden++;
+                    chrome.storage.local.get(['totalPostsHidden'], function(res) {
+                        const current = res.totalPostsHidden || 0;
+                        chrome.storage.local.set({ totalPostsHidden: current + 1 });
+                    });
+                }
+            } else {
+                if (post.style.display === 'none') {
+                    post.style.display = '';
+                }
+            }
+        });
     }
-    
     /**
      * Async function for initializing the content script
      * @returns {Promise<void>} A promise that resolves when initialization is complete
@@ -368,12 +280,15 @@
         observer.observe(document.body, { childList: true, subtree: true });
     }
     
-    // Listen for settings updates from popup
-    chrome.runtime.onMessage.addListener((request) => {
+    // Listen for messages
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === 'settingsUpdated' || request.action === 'advancedSettingsUpdated') {
             loadSettings().then(() => {
                 runFilters();
             });
+        }
+        if (request.action === 'getSessionStats') {
+            sendResponse({ hiddenCount: sessionPostsHidden });
         }
     });
     

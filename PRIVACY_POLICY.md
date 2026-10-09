@@ -1,6 +1,6 @@
 # Privacy Policy for Better LinkedIn
 
-**Last updated:** October 14th, 2025
+**Last updated:** October 9th, 2026
 
 Your privacy is critically important to us. This privacy policy outlines the types of information that are received and collected by Better LinkedIn (the "Extension") and how it is used.
 
@@ -27,7 +27,12 @@ The Extension may request certain browser permissions to function correctly. The
 
 ### 3. Third-Party Services
 
-The Extension does not use any third-party services, analytics, or advertising frameworks. Therefore, no data is shared with any third parties.
+The Extension does not use any third-party analytics, tracking, or advertising frameworks, and **we do not share any of your personal information with third parties.**
+
+However, the Extension provides a button to scan profile pictures for AI generation. This feature directs you to an external third-party service ([Truthscan](https://truthscan.com/ai-image-detector)). Please note:
+*   We do not share any user information, profile data, or images directly with this service.
+*   We do not receive any compensation, financial or otherwise, for recommending or linking to this service. 
+*   When you click the link and use the third-party service, you are subject to their respective privacy policy and terms of use.
 
 ### 4. Changes to This Privacy Policy
 

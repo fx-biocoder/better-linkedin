@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const addCompanyBtn = document.getElementById('addCompanyBtn');
     const companiesList = document.getElementById('companiesList');
 
+    const advancedBtn = document.getElementById('advancedBtn');
     const landingBtn = document.getElementById('landingBtn');
     const donateBtn = document.getElementById('donateBtn');
     const reportBugBtn = document.getElementById('reportBugBtn');
@@ -54,6 +55,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     donateBtn.addEventListener('click', openDonations);
     reportBugBtn.addEventListener('click', reportBug);
+    advancedBtn.addEventListener('click', () => {
+        chrome.runtime.openOptionsPage();
+    });
     landingBtn.addEventListener('click', openLandingPage);
 
     newKeywordInput.addEventListener('keypress', function(e) {
@@ -231,13 +235,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Open advanced filters function
+    // Open landing page function
     function openLandingPage() {
         const landingPageUrl = 'https://betterlinkedin.vercel.app/';
 
         chrome.tabs.create({
             url: landingPageUrl,
             active: true
+        });
+    }
+
+    // Get session stats from content script
+    const sessionPostsHiddenElement = document.getElementById('sessionPostsHidden');
+    if (sessionPostsHiddenElement) {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            if (tabs[0] && tabs[0].url.includes('linkedin.com/')) {
+                chrome.tabs.sendMessage(tabs[0].id, { action: 'getSessionStats' }, (response) => {
+                    if (chrome.runtime.lastError) {
+                        // Content script not ready or not found
+                        return;
+                    }
+                    if (response && response.hiddenCount !== undefined) {
+                        sessionPostsHiddenElement.textContent = response.hiddenCount;
+                    }
+                });
+            }
         });
     }
 });

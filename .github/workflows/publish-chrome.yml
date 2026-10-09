@@ -1,0 +1,108 @@
+name: Publish to Chrome Web Store
+
+# Runs when a PR is merged into main (a merge produces a push to main).
+# Can also be triggered manually from the Actions tab.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'manifest.json'
+      - '*.js'
+      - '*.html'
+      - 'img/**'
+      - 'styles/**'
+      - 'utils/**'
+  workflow_dispatch:
+
+concurrency:
+  group: chrome-web-store-publish
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  CWS_API: https://chromewebstore.googleapis.com
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: chrome-web-store
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read version from manifest
+        id: manifest
+        run: echo "version=$(jq -r .version manifest.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Package extension
+        run: |
+          mkdir -p dist
+          zip -r "dist/better-linkedin-${{ steps.manifest.outputs.version }}.zip" \
+            manifest.json *.js *.html img styles utils \
+            -x '*.DS_Store'
+          unzip -l dist/*.zip
+
+      - name: Upload zip as build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-zip
+          path: dist/*.zip
+
+      - name: Authenticate to Google Cloud (service account)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
+
+      - name: Upload package (Chrome Web Store API v2)
+        env:
+          TOKEN: ${{ steps.auth.outputs.access_token }}
+          PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+          ITEM_ID: ${{ secrets.CWS_EXTENSION_ID }}
+        run: |
+          set -euo pipefail
+          ITEM="publishers/${PUBLISHER_ID}/items/${ITEM_ID}"
+
+          RESP=$(curl -sS --fail-with-body -X POST \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Content-Type: application/zip" \
+            --data-binary @"$(ls dist/*.zip)" \
+            "${CWS_API}/upload/v2/${ITEM}:upload")
+          echo "Upload response: ${RESP}"
+          STATE=$(echo "$RESP" | jq -r '.uploadState // empty')
+
+          # Large uploads may be processed asynchronously; poll until done.
+          for i in $(seq 1 20); do
+            [ "$STATE" != "IN_PROGRESS" ] && break
+            sleep 15
+            RESP=$(curl -sS --fail-with-body \
+              -H "Authorization: Bearer ${TOKEN}" \
+              "${CWS_API}/v2/${ITEM}:fetchStatus")
+            STATE=$(echo "$RESP" | jq -r '.lastAsyncUploadState // .uploadState // empty')
+            echo "Poll $i: ${STATE}"
+          done
+
+          if [ "$STATE" != "SUCCEEDED" ]; then
+            echo "::error::Upload failed (state: ${STATE}). Did you bump the version in manifest.json?"
+            echo "$RESP"
+            exit 1
+          fi
+
+      - name: Submit for review / publish
+        env:
+          TOKEN: ${{ steps.auth.outputs.access_token }}
+          PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+          ITEM_ID: ${{ secrets.CWS_EXTENSION_ID }}
+        run: |
+          set -euo pipefail
+          RESP=$(curl -sS --fail-with-body -X POST \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{}' \
+            "${CWS_API}/v2/publishers/${PUBLISHER_ID}/items/${ITEM_ID}:publish")
+          echo "Publish response: ${RESP}"
+          echo "### Submitted v${{ steps.manifest.outputs.version }} to the Chrome Web Store for review" >> "$GITHUB_STEP_SUMMARY"
