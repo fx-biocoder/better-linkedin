@@ -1,5 +1,9 @@
 # Better LinkedIn Changelog
 
+## v3.0.1
+
+- Fixed a long standing issue where the extension didn't work until reloading the page manually. LinkedIn is a single page application, so `manifest.json` needs to include `https://www.linkedin.com/` for the content script `content-feed.js` to be properly loaded when the user navigates to https://linkedin.com instead of https://linkedin.com/feed
+
 ## v3.0.0
 
 - **Major Update:** Full Internationalization (i18n) support added for English, Spanish, Portuguese, and Italian across the entire extension.

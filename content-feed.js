@@ -1,8 +1,8 @@
 // Content script for Better LinkedIn extension
 
-(function() {
+(function () {
     'use strict';
-    
+
     let settings = {
         removePromoted: false,
         removeByKeywords: false,
@@ -20,10 +20,10 @@
     const interactions = {
         // English
         "en": new Set(['likes', 'celebrates', 'insightful', 'finds', 'funny', 'loves', 'commented', 'supports', 'reacted']),
-        
+
         // Spanish
         "es": new Set(['recomienda', 'celebra', 'interesante', 'gracia', 'encanta', 'comentado', 'apoya', 'reaccionado']),
-        
+
         // Portuguese
         "pt": new Set(['gostou', 'parabenizou', 'interessante', 'engraçado', 'amou', 'comentou', 'apoiou']),
 
@@ -90,9 +90,9 @@
                 'mutedWords',
                 'mutedCompanies',
             ]);
-            
+
             settings.removePromoted = result.removePromotedPosts === true;
-            settings.removeByKeywords = result.removeByKeywords === true; 
+            settings.removeByKeywords = result.removeByKeywords === true;
             settings.removeByCompanies = result.removeByCompanies === true;
             settings.removeByInteractions = result.removeByInteractions === true;
             settings.removeAIPosts = result.removeAIPosts === true;
@@ -119,7 +119,7 @@
     }
 
 
-    const removePromotedPosts = function(post) {
+    const removePromotedPosts = function (post) {
         if (!settings.removePromoted) return false;
         const spans = post.querySelectorAll('p > span');
         for (const span of spans) {
@@ -134,7 +134,7 @@
         return false;
     }
 
-    const removePostsByKeyword = function(post) {
+    const removePostsByKeyword = function (post) {
         if (!settings.removeByKeywords) return false;
         const postWords = post.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
         if (!postWords) return false;
@@ -148,7 +148,7 @@
         return false;
     }
 
-    const removePostsByCompanyName = function(post) {
+    const removePostsByCompanyName = function (post) {
         if (!settings.removeByCompanies) return false;
         const spans = post.querySelectorAll('p > span');
         for (const span of spans) {
@@ -160,14 +160,14 @@
         return false;
     }
 
-    const removeInteractionPosts = function(post) {
+    const removeInteractionPosts = function (post) {
         if (!settings.removeByInteractions) return false;
         const spans = post.querySelectorAll('p > span');
         const lang = document.documentElement.lang;
         const langInteractions = interactions[lang] || interactions['en'];
         for (const span of spans) {
             const text = normalizeText(span.textContent);
-            if (text.length > 150) continue; 
+            if (text.length > 150) continue;
             const words = text.split(' ');
             for (const word of words) {
                 if (langInteractions.has(word)) {
@@ -178,7 +178,7 @@
         return false;
     }
 
-    const removeAIPosts = function(post) {
+    const removeAIPosts = function (post) {
         if (!settings.removeAIPosts) return false;
         const postWords = post.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
         if (!postWords) return false;
@@ -186,7 +186,7 @@
         return regexAItext.some(regex => regex.test(text));
     }
 
-    const removeSuggestedPosts = function(post) {
+    const removeSuggestedPosts = function (post) {
         if (!settings.removeSuggested) return false;
         const spans = post.querySelectorAll('p > span');
         for (const span of spans) {
@@ -199,7 +199,7 @@
         return false;
     }
 
-    const removePostsWithEmojis = function(post) {
+    const removePostsWithEmojis = function (post) {
         if (!settings.removePostsWithEmojis) return false;
         const postWords = post.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
         if (!postWords) return false;
@@ -208,7 +208,7 @@
 
     const regexBroetryWords = /agree\?|thoughts\?|¿estás de acuerdo\?|¿qué opinas\?/i;
 
-    const removeBroetryPosts = function(post) {
+    const removeBroetryPosts = function (post) {
         if (!settings.removeBroetryPosts) return false;
         const postWords = post.querySelector(LINKEDIN_POST_BODY_CSS_SELECTOR);
         if (!postWords) return false;
@@ -229,7 +229,7 @@
         return callback(post);
     }
 
-    const runFilters = function() {
+    const runFilters = function () {
         const feed = document.querySelector(LINKEDIN_MAIN_FEED_CSS_SELECTOR);
         if (!feed) return;
 
@@ -237,7 +237,7 @@
 
         posts.forEach((post) => {
             let isFlagged = false;
-            
+
             isFlagged = execute(isFlagged, post, removePromotedPosts);
             isFlagged = execute(isFlagged, post, removePostsByKeyword);
             isFlagged = execute(isFlagged, post, removePostsByCompanyName);
@@ -246,12 +246,12 @@
             isFlagged = execute(isFlagged, post, removeSuggestedPosts);
             isFlagged = execute(isFlagged, post, removePostsWithEmojis);
             isFlagged = execute(isFlagged, post, removeBroetryPosts);
-            
+
             if (isFlagged) {
                 if (post.style.display !== 'none') {
                     post.style.display = 'none';
                     sessionPostsHidden++;
-                    chrome.storage.local.get(['totalPostsHidden'], function(res) {
+                    chrome.storage.local.get(['totalPostsHidden'], function (res) {
                         const current = res.totalPostsHidden || 0;
                         chrome.storage.local.set({ totalPostsHidden: current + 1 });
                     });
@@ -269,17 +269,28 @@
      */
     async function initialize() {
         await loadSettings();
-        
-        // Run filters after page load
-        window.addEventListener("load", () => {
-            setTimeout(runFilters, 3000);
+
+        // Run filters immediately after settings are loaded
+        runFilters();
+
+        // Run filters when document is ready or loaded
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(runFilters, 1500);
+        } else {
+            window.addEventListener('load', () => {
+                setTimeout(runFilters, 1500);
+            });
+        }
+
+        // Set up mutation observers with debounce
+        let timeout = null;
+        const observer = new MutationObserver(() => {
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(runFilters, 100);
         });
-        
-        // Set up mutation observers
-        const observer = new MutationObserver(runFilters);
         observer.observe(document.body, { childList: true, subtree: true });
     }
-    
+
     // Listen for messages
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === 'settingsUpdated' || request.action === 'advancedSettingsUpdated') {
@@ -291,7 +302,7 @@
             sendResponse({ hiddenCount: sessionPostsHidden });
         }
     });
-    
+
     // Start the extension
     initialize();
 })();

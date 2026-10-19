@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Better LinkedIn: Enhance your LinkedIn\u2122 feed",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Improve your LinkedIn\u2122 feed by automatically removing unwanted posts.",
   "author": "Facundo Martínez",
   "permissions": [
@@ -16,18 +16,35 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.linkedin.com/feed/*"],
-      "js": ["utils/i18n.js", "content-feed.js"],
+      "matches": [
+        "https://www.linkedin.com/",
+        "https://www.linkedin.com/feed*",
+        "https://www.linkedin.com/feed/*"
+      ],
+      "js": [
+        "utils/i18n.js",
+        "content-feed.js"
+      ],
       "run_at": "document_end"
     },
     {
-      "matches": ["https://www.linkedin.com/jobs/*"],
-      "js": ["utils/i18n.js", "content-jobs.js"],
+      "matches": [
+        "https://www.linkedin.com/jobs/*"
+      ],
+      "js": [
+        "utils/i18n.js",
+        "content-jobs.js"
+      ],
       "run_at": "document_end"
     },
     {
-      "matches": ["https://www.linkedin.com/in/*"],
-      "js": ["utils/i18n.js", "content-profile.js"],
+      "matches": [
+        "https://www.linkedin.com/in/*"
+      ],
+      "js": [
+        "utils/i18n.js",
+        "content-profile.js"
+      ],
       "run_at": "document_end"
     }
   ],
